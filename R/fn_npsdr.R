@@ -1,22 +1,21 @@
-#'Gradient descent based nonlinear sufficient dimension reduction machine via kernel trick
+#'#'A unified Principal sufficient dimension reduction method via kernel trick
 #'@description
-#'A method for reducing a dimension of the data sufficiently using gradient descent optimization method
-#'
+#'Principal Sufficient Dimension Reduction method
 #'@param x data matrix
 #'@param y either continuous or (+1,-1) typed binary response vector
-#'@param H the number of slicing
+#'@param H the number of slices. default value is 10
 #'@param h very small interval for calculating numerical derivatives for a given arbitrary loss function
-#'@param lambda hyperparameter for the loss function
-#'@param delta learning rate
-#'@param k number of basis functions for a kernel trick
-#'@param eps threshold for stopping iteration with respect to the magnitude of derivative
-#'@param max.iter maximum iteration number for the optimization process
+#'@param lambda hyperparameter for the loss function. default value is 0.1
+#'@param delta learning rate for gradient descent method. default value is 0.1
+#'@param k number of basis functions for a kernel trick, floor(length(y)/3) is default
+#'@param eps threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-5
+#'@param max.iter maximum iteration number for the optimization process. default value is 30
 #'@param loss pre-specified loss functions are "logistic", svm","l2svm","lwpsvm", and user-defined loss function object also can be used formed by inside double quotation mark
-#'@param a a hyperparameter for the LUM loss function
-#'@param c a hyperparameter for the LUM loss function
-#'@return An estimated matrix B for a sufficient dimension reduction will be returned
-#'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seungjun Shin, \email{sjshin@korea.ac.kr}
-#'@seealso \code{\link{pred.npsdr}}
+#'@param a the first hyperparameter for the LUM loss function
+#'@param c second hyperparameter for the LUM loss function
+#'@return An estimated kernel matrix and its eigenvalues and eigenvectors for a sufficient dimension reduction will be returned
+#'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+#'@seealso \code{\link{predict.npsdr}}
 #'@examples
 #'\donttest{
 #'set.seed(1)
@@ -40,35 +39,58 @@
 #'  rslt <- (1-m)*(as.numeric((1-m) > 0))
 #'  return(rslt)
 #'}
-#'GD.npsdr.solver(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
+#'npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
 #'                max.iter, loss="my.logistic")
-#'GD.npsdr.solver(x, y.binary, H=20, h, lambda, delta, k=floor(length(y)/3), eps,
-#'                max.iter, loss="svm") }
-#'@import stats kernlab svmpath
-#'@export
+#'}
+#'@import stats svmpath
+#'@export npsdr
 
 
-GD.npsdr.solver <- function(x, y, H, h, lambda, delta, k = floor(length(y)/3), eps, max.iter, loss, a=NULL, c=NULL)
+
+npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(length(y)/3),
+                  eps=1.0e-5, max.iter=NULL, loss=NULL, a=NULL, c=NULL)
 {
   if(sum(as.character(loss) == c("ls", "wls")) == 0){
     if(!is.matrix(x) & !is.data.frame(x))
       stop("x must be a matrix or dataframe.")
     if(ncol(as.matrix(y)) != 1)
       stop("y must be a univariate.")
-    if(as.numeric(is.null(delta)) == 1 | delta < 0)
-      stop("Delta is a learning rate which should be specified as a positve value.")
-    if(as.character(loss) == "LUM" & sum(is.null(c(a,c))) >= 1)
-      stop("A LUM loss fucntion needs both hyperparameter a and c.")
   }
-  if(H <= 1)
-    stop("H should be greater than 1.")
-  if(lambda <= 0)
-    stop("lambda should be a positive numeric.")
+  if(is.null(delta) == T ){
+    warning("Delta is a learning rate which should be specified as a positve value. Delta is set to 0.1 as a default")
+    delta <- 0.1
+  }
+  if(is.null(loss)==T){
+    warning("Loss function is set to hinge loss as a default.")
+    loss <- 'svm'
+  }
+  if(as.character(loss) == "LUM" ){
+    if(is.null(a) == T)
+      warning("A LUM loss fucntion needs both hyperparameter a and c. Default values are applied; a=1, c=10^8")
+    a <- 1; c<- 10^8
+  }
+  if(is.null(H) == T){
+    warning("H is set to 10 as a default.")
+    H <- 10
+  }
+
+  if(is.null(lambda) == T){
+    warning("lambda is set to 0.1 as a default.")
+    lambda <- 0.1
+  }
+
 
   if (length(y) != nrow(x))     #check lengths
     stop("The response and predictors have different number of observations")
 
-
+  if(is.null(h) == T){
+    warning("h is set to 1.0e-5 as a default.")
+    h <- 1.0e-5
+  }
+  if(is.null(max.iter) == T){
+    warning("max.iter is set to 30 as a default.")
+    max.iter <- 30
+  }
   psi.gen <- get.psi(x,y,k)
   Psi.new <- psi.gen$w   #n*k
   n <- nrow(Psi.new)
@@ -89,7 +111,7 @@ GD.npsdr.solver <- function(x, y, H, h, lambda, delta, k = floor(length(y)/3), e
   w.final <- matrix(0, nrow=p, ncol=length(qprob))
   eigen.mat <- diag(1,p,p)
 
-  type.list <- c("svm","logistic","l2svm", "nwpsvm", "LUM", "wlogistic","wl2svm","wLUM","quantile")
+  type.list <- c("svm","logistic","l2svm", "nwpsvm", "LUM", "wlogistic","wl2svm","wLUM","quantile","asymls")
   type.list2 <- c("ls","wls")
 
   if(sum(as.character(loss) == type.list) != 0){
@@ -434,6 +456,28 @@ GD.npsdr.solver <- function(x, y, H, h, lambda, delta, k = floor(length(y)/3), e
         w.final[,s] <- w[,s] #s,s
       }
     }
+    if(as.character(loss) == "asymls"){
+      if(sum(unique(y)) == 0)
+        stop("response variable should be continuous!")
+      for (s in 1:length(pi.grid)) {
+        for(iter in 1:max.iter){
+          Psi <- Psi.new
+          y.new <- y
+          n <- nrow(Psi)
+          w <- w.init
+          A <- t(Psi)%*%Psi
+          for (k in 1:p){
+            u <- y.new - Psi%*%w[,s]   #s
+            derivative.j <- 2*(1/nrow(Psi))*w[k,s]+lambda*(1/length(y.new))*sum(-Psi[,k]*2*u*{pi.grid[s]*as.numeric(I(u>0))+(1-pi.grid[s])*as.numeric(I(u<=0))})
+            theta.new[k] <- w[k,s] -  delta*derivative.j  ##k,k,s
+          }
+          #print(derivative.j)
+          w[,s] <- theta.new  #s
+          w.init <- matrix(theta.new, nrow=p, ncol = length(pi.grid))
+        }
+        w.final[,s] <- w[,s] #s,s
+      }
+    }
 
     Mn <- matrix(0, p, p)
     for (h in 1:length(qprob)) Mn <- Mn + w.final[,h, drop = F] %*% t(w.final[,h, drop = F])
@@ -441,6 +485,7 @@ GD.npsdr.solver <- function(x, y, H, h, lambda, delta, k = floor(length(y)/3), e
     v <- result$vectors
     u <- result$values
     obj <- list(evector = v, evalue = u, obj.psi = psi.gen)
+    #structure(class = "npsdr", obj)
     class(obj) <- "npsdr"
     return(obj)
   }
@@ -534,6 +579,7 @@ GD.npsdr.solver <- function(x, y, H, h, lambda, delta, k = floor(length(y)/3), e
     u <- result$values
     obj <- list(evector = v, evalue = u, obj.psi = psi.gen)
     class(obj) <- "npsdr"
+    #structure(class = "npsdr", obj)
     return(obj)
   }
 
@@ -568,9 +614,9 @@ GD.npsdr.solver <- function(x, y, H, h, lambda, delta, k = floor(length(y)/3), e
     v <- result$vectors
     u <- result$values
     newlist <- list(evector=v, evalue=u, obj.psi = psi.gen)
-    #newlist <- list("Mn"=r.H, "values" = eigen.Mn$values, "vectors" = eigen.Mn$vectors)
-    return(newlist)
+    #structure(class = "npsdr", obj)
     class(newlist) <- "npsdr"
+    return(newlist)
   }
 }
 
