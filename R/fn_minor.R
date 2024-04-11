@@ -1,6 +1,6 @@
-######################
-### arbitrary loss ###
-#######################
+###################################
+### Pre-embedded arbitrary loss ###
+###################################
 
 E <- function(object){UseMethod("E")}
 fn_arbitrary <- function(object){UseMethod("fn_arbitrary")}
@@ -9,6 +9,7 @@ my.hinge <- function(object){UseMethod("my.hinge")}
 my.l2svm <- function(object){UseMethod("my.l2svm")}
 my.lum <- function(object){UseMethod("my.lum")}
 my.quantile <- function(object){UseMethod("my.quantile")}
+my.asymLS <- function(object){UseMethod("my.asymLS")}
 fn_arbitrary_loss <- function(object){UseMethod("fn_arbitrary_loss")}
 fn_arbitrary_binary_loss <- function(object){UseMethod("fn_arbitrary_binary_loss")}
 fn_arbitrary_nonlinear_loss <- function(object){UseMethod("fn_arbitrary_nonlinear_loss")}
@@ -54,6 +55,10 @@ my.quantile <- function(u,prob,...){
   return(rslt)
 }
 
+my.asymLS <- function(u,prob,...){
+  rslt <- (u)^2*prob*I(u>=0)+(u)^2*(1-prob)*I(u<=0)
+  return(rslt)
+}
 
 ############################
 ### Derivative functions ###
@@ -121,8 +126,9 @@ fn_arbitrary_nonlinear_binary_loss <- function(x, y, theta, prob,lambda, loss,a=
   return(loss.output)
 }
 
-
+###############################################
 ##auxilary functions for nonlinear prediction##
+###############################################
 get.psi <- function(x, y, k) {
     n <- nrow(x)
     x <- scale(x)
@@ -138,7 +144,6 @@ get.psi <- function(x, y, k) {
     class(tmp.obj) <- "npsdr"
     return(tmp.obj)
 }
-
 
 
 psi.function <- function(value, x, v, w, l, kernel.function, kernel.param){
@@ -166,8 +171,6 @@ kernel.function <- function (x, y = x, param.kernel = 1/p) {
   exp(-a * param.kernel)
 }
 
-#tau <- mean(as.numeric(dist(x)))
-#kernel.param <- 1/tau^2
 
 phix <- function(value, obj, order = 2) {
   psi.function <- psi.function
@@ -188,3 +191,8 @@ phix <- function(value, obj, order = 2) {
   temp
 }
 
+d2 <- function(Bhat, B) {
+  # This function reports performance in terms of the Frobenius norm of the projection matrix difference
+
+  return(norm(B%*%solve(t(B)%*%B)%*%t(B)-Bhat%*%solve(t(Bhat)%*%Bhat)%*%t(Bhat),"f"))
+}

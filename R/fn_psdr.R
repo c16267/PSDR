@@ -1,3 +1,55 @@
+#'#'Unified Principal sufficient dimension reduction methods
+#'@description
+#'Principal Sufficient Dimension Reduction methods
+#'@param x data matrix
+#'@param y either continuous or (+1,-1) typed binary response vector
+#'@param init initial coefficient vector. If not specified, random vector from standard normal distribution is applied by default
+#'@param H the number of slices. default value is 10
+#'@param lambda hyperparameter for the loss function. default value is 0.1
+#'@param delta learning rate for gradient descent method. default value is 0.1
+#'@param h very small interval for calculating numerical derivatives for a given arbitrary loss function, default is 1.0e-5
+#'@param eps threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-5
+#'@param max.iter maximum iteration number for the optimization process. default value is 30
+#'@param loss pre-specified loss functions are "logistic", svm","l2svm","lwpsvm", and user-defined loss function object also can be used formed by inside double quotation mark
+#'@param a the first hyperparameter for the LUM loss function
+#'@param c second hyperparameter for the LUM loss function
+#'@param stochastic specify whether the user want to use the stochastic gradient descent algorithm. default is FALSE
+#'@return An estimated basis for central subspace and its eigenvalues and eigenvectors for SDR is returned
+#'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+#'@seealso \code{\link{plot.psdr}}, \code{\link{dimension.psdr}}
+#'@examples
+#'\donttest{
+#'set.seed(1)
+#'n <- 200;
+#'p <- 5;
+#'H <- 10;
+#'lambda <- 0.1
+#'eps <- 1.0e-5
+#'max.iter <- 10
+#'init.theta <- rnorm(p,0,1)
+#'h <- 1.0e-6; delta <- 5*1.0e-1
+#'x <- matrix(rnorm(n*p, 0, 2), n, p)
+#'err <- rnorm(n, 0, .2)
+#'B <- matrix(0, p, 2)
+#'B[1,1] <- 1; B[2,2] <- 1
+#'x1 <- x %*% B[,1]
+#'x2 <- x %*% B[,2]
+#'fx <-  x1/(0.5 + (x2 + 1)^2)
+#'y <- c(fx + err) # response
+#'my.hinge <- function(m,...){
+#'  rslt <- (1-m)*(as.numeric((1-m) > 0))
+#'  return(rslt)
+#'}
+#'psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
+#'psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="my.hinge")
+#'}
+#'@import stats
+#'@export psdr
+
+
+
+
+
 psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps=1.0e-5, max.iter=NULL,
                  loss=NULL, a=NULL, c=NULL, stochastic=FALSE) {
   if(sum(as.character(loss) == c("ls", "wls")) == 0){

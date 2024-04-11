@@ -3,7 +3,7 @@ Title: Unified Principal Sufficient Dimension Reduction Package
 Version: 1.0.0
 Author: Jungmin Shin, Seung Jun Shin
 Maintainer: Jungmin Shin <jungminshin@korea.ac.kr>
-Description: A unified version of principal sufficient dimension reduction methods for both linear and nonliear cases
+Description: A unified version of principal sufficient dimension reduction methods for both linear and nonliear cases.
 License: GPL-2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

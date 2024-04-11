@@ -35,12 +35,8 @@
 #'fx <-  x1/(0.5 + (x2 + 1)^2)
 #'y <- c(fx + err) # response
 #'y.binary <- sign(y)
-#'my.hinge <- function(m,...){
-#'  rslt <- (1-m)*(as.numeric((1-m) > 0))
-#'  return(rslt)
-#'}
 #'npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
-#'                max.iter, loss="my.logistic")
+#'                max.iter, loss="svm")
 #'}
 #'@import stats svmpath
 #'@export npsdr
