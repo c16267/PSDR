@@ -2,7 +2,7 @@
 #' @description
 #'Predict a response after reducing a input data dimension when the response and the input variable have a nonlinear functional relationship.
 #'
-#'@param obj The npsdr object
+#'@param x The object from function npsdr
 #'@param new.x new data X
 #'@param d true dimension for data x. d=2 is default
 #'@param ... additional arguments affecting the predictions produced.
@@ -30,12 +30,12 @@
 #'y.binary <- sign(y)
 #'new.x <- matrix(rnorm(n*p, 0, 2), n, p)
 #'obj <- npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps, max.iter, loss="svm")
-#'predict(obj, new.x, d = 2) }
+#'new.y(x=obj, new.x, d = 2) }
 #'@import stats graphics svmpath
 #'@export
 
-
-predict.npsdr <- function(obj, new.x, d = 2, ...){
+new.y <- function(x, new.x, d = 2, ...){
+  obj <- x
   if (!inherits(obj, "npsdr"))
     stop("use only with \"npsdr\" objects")
   x.obj <- obj$obj.psi$scaled.x
@@ -47,7 +47,7 @@ predict.npsdr <- function(obj, new.x, d = 2, ...){
   l <- obj$obj.psi$l
   k <- length(l)
 
-  v <- obj$evector
+  v <- obj$evectors
 
   p <- length(m)
   n <- nrow(x.obj)

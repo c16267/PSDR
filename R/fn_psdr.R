@@ -14,9 +14,10 @@
 #'@param a the first hyperparameter for the LUM loss function
 #'@param c second hyperparameter for the LUM loss function
 #'@param stochastic specify whether the user want to use the stochastic gradient descent algorithm. default is FALSE
+#'@param plot visualize user defined loss function. default is FALSE
 #'@return An estimated basis for central subspace and its eigenvalues and eigenvectors for SDR is returned
 #'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
-#'@seealso \code{\link{plot.psdr}}, \code{\link{dimension.psdr}}
+#'@seealso \code{plot.psdr}
 #'@examples
 #'\donttest{
 #'set.seed(1)
@@ -40,8 +41,10 @@
 #'  rslt <- (1-m)*(as.numeric((1-m) > 0))
 #'  return(rslt)
 #'}
-#'psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
+#'obj <- psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
 #'psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="my.hinge")
+#'print(obj)
+#'plot(obj)
 #'}
 #'@import stats
 #'@export psdr
@@ -51,7 +54,7 @@
 
 
 psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps=1.0e-5, max.iter=NULL,
-                 loss=NULL, a=NULL, c=NULL, stochastic=FALSE) {
+                 loss=NULL, a=NULL, c=NULL, stochastic=FALSE, plot=FALSE) {
   if(sum(as.character(loss) == c("ls", "wls")) == 0){
     if(!is.matrix(x) & !is.data.frame(x))
       stop("x must be a matrix or dataframe.")
@@ -523,11 +526,13 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
   }
 
   else if(sum(as.character(loss) == type.list) == 0 & sum(as.character(loss)==type.list2)==0){
-    if(h > 1.0e-3)
+    if(h < 1.0e-3)
       warning("An infinitesimal interval h should be smaller than 1.0e-3.")
     ft <- E(loss)
     grid.m <- seq(-2,2,length=100)
+    if(plot == TRUE){
     plot(grid.m, ft(grid.m,a,c,prob=0.5), type="l", xlab="margin", ylab="loss")
+    }
     message("loss function must be a convex function")
     w.init <- matrix(init, nrow=p, ncol=length(qprob))
     w.final <- matrix(0, nrow=p, ncol=length(qprob))
@@ -654,6 +659,35 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
   return(newlist)
 }
 
+
+#' @noRd
+#' @export
+print.psdr <- function(x, ...) {
+  obj <- x
+  d <- list(x = obj$x, y = obj$y, Mn= obj$Mn, evalues = obj$values, evectors = obj$vectors, N=obj$n, Xbar=  apply(obj$x, 2, mean), r=obj$r.H, A=obj$A)
+  writeLines("psdr result:")
+  print(d, ...)
+  invisible(d)
+}
+
+
+
+#' @noRd
+#' @export
+plot.psdr <- function(x, dim=2, ...) {
+  obj <- x
+  if (!inherits(obj, "psdr"))
+    stop("use only with \"psdr\" objects")
+  temp <- obj$vectors
+  obj_psdr <- obj$x %*% temp
+  par(mfrow=c(ceiling(sqrt(dim)), ceiling(sqrt(dim))))
+  par(mfrow=c(1,dim))
+  for(d in 1:dim){
+    plot(obj_psdr[,d], obj$y, type = "p", xlab = bquote(paste(hat(B)[.(d)]^T*X)), ylab  = expression(Y) , cex=.7,...)
+    graphics::lines(lowess(obj_psdr[,d], obj$y), col="red", lwd=1)
+  }
+  par(mfrow=c(1,1))
+}
 
 
 

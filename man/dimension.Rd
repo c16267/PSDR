@@ -4,7 +4,7 @@
 \alias{dimension}
 \title{Determination of structural dimension}
 \usage{
-dimension(obj, rho, ...)
+dimension(obj, rho)
 }
 \arguments{
 \item{obj}{The psdr object}
@@ -38,7 +38,7 @@ plot(d.hat)
 
 }
 \seealso{
-\code{\link{psdr}} \code{\link{plot.psdr}}
+\code{\link{psdr}} \code{plot.Gn}
 }
 \author{
 Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}

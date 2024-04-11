@@ -5,7 +5,7 @@
 #'@param rho hyperparameter of CVBIC
 #'@return Estimated Gn scores for a optimal structural dimension will be returned
 #'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
-#'@seealso \code{\link{psdr}} \code{\link{plot.psdr}}
+#'@seealso \code{\link{psdr}} \code{plot.Gn}
 #'@examples
 #'\donttest{
 #'set.seed(1234)
@@ -25,8 +25,7 @@
 #'plot(d.hat)
 #'}
 #'
-#'@import stats
-#'@importFrom graphics lines plot legend
+#'@import stats graphics
 #'@export dimension
 
 #
@@ -34,7 +33,7 @@
 #     UseMethod("dim.psdr")
 #}
 
-dimension <- function(obj, rho, ...){
+dimension <- function(obj, rho){
   p <- nrow(obj$vectors)
   v <- obj$values
   n <- nrow(obj$x);
@@ -47,8 +46,10 @@ dimension <- function(obj, rho, ...){
 }
 
 
-
-plot.Gn <- function(obj, ...) {
+#' @noRd
+#' @export
+plot.Gn <- function(x, ...) {
+  obj <- x
   if (!inherits(obj, "Gn"))
     stop("use only with \"Gn\" objects")
   x.vec <- seq(1, length(obj), by=1)

@@ -17,7 +17,8 @@ psdr(
   loss = NULL,
   a = NULL,
   c = NULL,
-  stochastic = FALSE
+  stochastic = FALSE,
+  plot = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ psdr(
 \item{c}{second hyperparameter for the LUM loss function}
 
 \item{stochastic}{specify whether the user want to use the stochastic gradient descent algorithm. default is FALSE}
+
+\item{plot}{visualize user defined loss function. default is FALSE}
 }
 \value{
 An estimated basis for central subspace and its eigenvalues and eigenvectors for SDR is returned
@@ -76,12 +79,14 @@ my.hinge <- function(m,...){
  rslt <- (1-m)*(as.numeric((1-m) > 0))
  return(rslt)
 }
-psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
+obj <- psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
 psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="my.hinge")
+print(obj)
+plot(obj)
 }
 }
 \seealso{
-\code{\link{plot.psdr}}, \code{\link{dimension.psdr}}
+\code{plot.psdr}
 }
 \author{
 Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}

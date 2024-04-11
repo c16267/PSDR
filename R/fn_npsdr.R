@@ -15,7 +15,7 @@
 #'@param c second hyperparameter for the LUM loss function
 #'@return An estimated kernel matrix and its eigenvalues and eigenvectors for a sufficient dimension reduction will be returned
 #'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
-#'@seealso \code{\link{predict.npsdr}}
+#'@seealso \code{\link{new.y}}
 #'@examples
 #'\donttest{
 #'set.seed(1)
@@ -480,8 +480,8 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
     result <- eigen(Mn)
     v <- result$vectors
     u <- result$values
-    obj <- list(evector = v, evalue = u, obj.psi = psi.gen)
-    #structure(class = "npsdr", obj)
+    obj <- list(evectors = v, evalues = u, obj.psi = psi.gen)
+    structure(class = "npsdr", obj)
     class(obj) <- "npsdr"
     return(obj)
   }
@@ -609,12 +609,13 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
     result <- eigen(t(r.H[,1:p])%*%r.H[,1:p])
     v <- result$vectors
     u <- result$values
-    newlist <- list(evector=v, evalue=u, obj.psi = psi.gen)
-    #structure(class = "npsdr", obj)
+    newlist <- list(evectors=v, evalues=u, obj.psi = psi.gen)
+    structure(class = "npsdr", obj)
     class(newlist) <- "npsdr"
     return(newlist)
   }
 }
+
 
 
 

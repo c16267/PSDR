@@ -1,7 +1,7 @@
 Package: psdr
 Title: Unified Principal Sufficient Dimension Reduction Package
 Version: 1.0.0
-Author: Jungmin Shin, Seung Jun Shin
+Author: Jungmin Shin, Andreas Artemiou, Seung Jun Shin
 Maintainer: Jungmin Shin <jungminshin@korea.ac.kr>
 Description: A unified version of principal sufficient dimension reduction methods for both linear and nonliear cases.
 License: GPL-2

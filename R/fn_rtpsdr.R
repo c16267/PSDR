@@ -180,10 +180,38 @@ rtpsdr <- function(A, r, n, Xbar, X, y, direction="forward", H=NULL, lambda=NULL
     eigen.Mn <- eigen(Working_mat)
     newlist <- list("x" = X[ ,-ncol(X)], "y" = y, N=n+l, Xbar=Xbar, r=r.new, A=A.new,
                     "Mn"=Working_mat, "values" = eigen.Mn$values, "vectors" = eigen.Mn$vectors)
-    class(newlist) <- "psdr"
+    class(newlist) <- "rtpsdr"
+    structure(class = "rtpsdr", newlist)
   }
   return(newlist)
 }
 
 
+#' @noRd
+#' @export
+print.rtpsdr <- function(x, ...) {
+  obj <- x
+  d <- list(x = obj$x, y = obj$y, Mn= obj$Mn, evalues = obj$values, evectors = obj$vectors, N=obj$n, Xbar=  apply(obj$x, 2, mean), r=obj$r.H, A=obj$A)
+  writeLines("psdr result:")
+  print(d, ...)
+  invisible(d)
+}
 
+
+
+#' @noRd
+#' @export
+plot.rtpsdr <- function(x, dim=2, ...) {
+  obj <- x
+  if (!inherits(obj, "psdr"))
+    stop("use only with \"psdr\" objects")
+  temp <- obj$vectors
+  obj_psdr <- obj$x %*% temp
+  par(mfrow=c(ceiling(sqrt(dim)), ceiling(sqrt(dim))))
+  par(mfrow=c(1,dim))
+  for(d in 1:dim){
+    plot(obj_psdr[,d], obj$y, type = "p", xlab = bquote(paste(hat(B)[.(d)]^T*X)), ylab  = expression(Y) , cex=.7,...)
+    graphics::lines(lowess(obj_psdr[,d], obj$y), col="red", lwd=1)
+  }
+  par(mfrow=c(1,1))
+}

@@ -74,7 +74,7 @@ npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
 }
 }
 \seealso{
-\code{\link{predict.npsdr}}
+\code{\link{new.y}}
 }
 \author{
 Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
