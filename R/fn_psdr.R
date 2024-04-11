@@ -1,4 +1,4 @@
-#'#'Unified Principal sufficient dimension reduction methods
+#'Unified Principal sufficient dimension reduction methods
 #'@description
 #'Principal Sufficient Dimension Reduction methods
 #'@param x data matrix

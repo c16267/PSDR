@@ -2,7 +2,7 @@
 % Please edit documentation in R/fn_npsdr.R
 \name{npsdr}
 \alias{npsdr}
-\title{#'A unified Principal sufficient dimension reduction method via kernel trick}
+\title{A unified Principal sufficient dimension reduction method via kernel trick}
 \usage{
 npsdr(
   x,

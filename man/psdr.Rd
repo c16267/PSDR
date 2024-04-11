@@ -2,7 +2,7 @@
 % Please edit documentation in R/fn_psdr.R
 \name{psdr}
 \alias{psdr}
-\title{#'Unified Principal sufficient dimension reduction methods}
+\title{Unified Principal sufficient dimension reduction methods}
 \usage{
 psdr(
   x,

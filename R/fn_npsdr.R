@@ -1,4 +1,4 @@
-#'#'A unified Principal sufficient dimension reduction method via kernel trick
+#'A unified Principal sufficient dimension reduction method via kernel trick
 #'@description
 #'Principal Sufficient Dimension Reduction method
 #'@param x data matrix
