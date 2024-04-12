@@ -45,11 +45,44 @@
 #'psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="my.hinge")
 #'print(obj)
 #'plot(obj)
+#'
+#'
+#'##real data: Boston housing data
+#'data("BostonHousing")
+#'attach(BostonHousing)
+#'BostonHousing <- BostonHousing[BostonHousing$crim < 3.2 , -c(4,9)]
+#'X <- BostonHousing[,-12]
+#'Y <- BostonHousing[,"medv"]
+#'p <- ncol(X); H <- 20; lambda <- 0.1; eps <- 1.0e-5;
+#'max.iter <- 100; h <- 1.0e-5; delta <- 2*1.0e-1;
+#'init.theta <- rnorm(sd=1,n=p)
+#'rslt <- psdr(X, Y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
+#'value.lsvm <- rslt$values
+#'lsvm <- round(rslt$vectors,3)
+#'X <- as.matrix(X)
+#'x.lsvm <- X %*% lsvm
+#'plot(x.lsvm[,1],Y , type = "p", xlab = expression(hat(b)[1]^T*X), ylab="medv", cex=1)
+#'lines(lowess( x.lsvm[,1], Y), col="red", lwd=2)
+#'plot(x.lsvm[,2], Y, type = "p", xlab = expression(hat(b)[2]^T*X), ylab="medv", cex=1);
+#'lines(lowess(x.lsvm[,2], Y), col="blue", lwd=2)
+#'
+#'##real data: Wisconsin diagnostic breast cancer data
+#'data(wisc)
+#'x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
+#'y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
+#'init.theta <- rnorm(dim(x.wisc)[2],0,1)
+#'wisc.obj <- psdr(x.wisc, y.wisc, init.theta, H=20,lambda=0.1, h=1.0e-6,
+#'                 delta=0.5,eps=10^-4, max.iter=30, loss="wlogistic")
+#'value.lsvm <- wisc.obj$values
+#'lsvm <- round(wisc.obj$vectors,3)
+#'x.lsvm <- x.wisc %*% lsvm
+#'par(mar=c(5,5,5,5), oma=c(1,1,1,1))
+#'plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = "1st predictor", ylab  = "2nd predictor")
+#'points(x.lsvm[y.wisc == 1,1], x.lsvm[y.wisc == 1,2], col = 4, pch = "+")
+#'points(x.lsvm[y.wisc != 1,1], x.lsvm[y.wisc != 1,2], col = 2)
 #'}
 #'@import stats
 #'@export psdr
-
-
 
 
 

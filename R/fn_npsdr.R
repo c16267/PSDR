@@ -37,6 +37,16 @@
 #'y.binary <- sign(y)
 #'npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
 #'                max.iter, loss="svm")
+#'
+#'##real data: Wisconsin diagnostic breast cancer data
+#'data(wisc)
+#'p <- dim(x.wisc)[2]
+#'my.obj <- npsdr(x.wisc,y.wisc,H=10,lambda=0.0001,delta=0.05, k=floor(length(y.wisc)/3),
+#'              eps, max.iter=100,loss="wlogistic")
+#'x.nsvm <- phix(x.wisc, my.obj)
+#'boxplot(x.nsvm[y.wisc == 1,1], x.nsvm[y.wisc != 1,1], xlab = "Y", axes = F,
+#'        ylab = expression(hat(phi)[1](x)))
+#'axis(1, seq(0.5, 2.5, by = 0.5), c(NA, "+1", NA, "-1", NA)); axis(2, las = 1)
 #'}
 #'@import stats svmpath
 #'@export npsdr

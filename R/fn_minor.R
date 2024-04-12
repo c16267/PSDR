@@ -179,7 +179,8 @@ phix <- function(value, obj, order = 2) {
   w <- obj$obj.psi$w
   l <- obj$obj.psi$l
   kernel.function <- kernel.function
-  kernel.param <- kernel.param
+  tau <- mean(as.numeric(dist(x)))
+  kernel.param <- 1/tau^2
   p <- ncol(x)
   if (length(value) == p) {
     temp <- psi.function(value, x, v[,1:order, drop = F], w, l, kernel.function, kernel.param)
