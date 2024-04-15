@@ -8,14 +8,14 @@
 #'@param lambda hyperparameter for the loss function. default value is 0.1
 #'@param delta learning rate for gradient descent method. default value is 0.1
 #'@param k number of basis functions for a kernel trick, floor(length(y)/3) is default
-#'@param eps threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-5
+#'@param eps threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-4
 #'@param max.iter maximum iteration number for the optimization process. default value is 30
 #'@param loss pre-specified loss functions are "logistic", svm","l2svm","lwpsvm", and user-defined loss function object also can be used formed by inside double quotation mark
 #'@param a the first hyperparameter for the LUM loss function
 #'@param c second hyperparameter for the LUM loss function
 #'@return An estimated kernel matrix and its eigenvalues and eigenvectors for a sufficient dimension reduction will be returned
 #'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
-#'@seealso \code{\link{new.y}}
+#'@seealso \code{\link{new.y}}, \code{\link{phix}}
 #'@examples
 #'\donttest{
 #'set.seed(1)
@@ -40,11 +40,12 @@
 #'
 #'##real data: Wisconsin diagnostic breast cancer data
 #'data(wisc)
-#'p <- dim(x.wisc)[2]
+#'x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
+#'y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
 #'my.obj <- npsdr(x.wisc,y.wisc,H=10,lambda=0.0001,delta=0.05, k=floor(length(y.wisc)/3),
 #'              eps, max.iter=100,loss="wlogistic")
 #'x.nsvm <- phix(x.wisc, my.obj)
-#'boxplot(x.nsvm[y.wisc == 1,1], x.nsvm[y.wisc != 1,1], xlab = "Y", axes = F,
+#'boxplot.default(x.nsvm[y.wisc == 1,1], x.nsvm[y.wisc != 1,1], xlab = "Y", axes = FALSE,
 #'        ylab = expression(hat(phi)[1](x)))
 #'axis(1, seq(0.5, 2.5, by = 0.5), c(NA, "+1", NA, "-1", NA)); axis(2, las = 1)
 #'}
@@ -53,8 +54,8 @@
 
 
 
-npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(length(y)/3),
-                  eps=1.0e-5, max.iter=NULL, loss=NULL, a=NULL, c=NULL)
+npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k=floor(length(y)/3),
+                  eps=1.0e-4, max.iter=NULL, loss=NULL, a=NULL, c=NULL)
 {
   if(sum(as.character(loss) == c("ls", "wls")) == 0){
     if(!is.matrix(x) & !is.data.frame(x))
@@ -127,20 +128,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
       for (s in 1:length(qprob)) {
         y.tilde.new <- rep(1, nrow(Psi.new))
         y.tilde.new[y < qy[s]] <- -1  #s
-      #  pos.rate <- sum(y.tilde.new==1)/nrow(Psi.new)
-      #  neg.rate <- sum(y.tilde.new==-1)/nrow(Psi.new)
         for(iter in 1:max.iter){
-          #if(stochastic == TRUE){  ###stratified sampling
-          #  set.seed(iter)
-          #  pos.ind <- sample(which(y.tilde.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-          #  neg.ind <- sample(which(y.tilde.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-          #  ind <- c(pos.ind,neg.ind)
-          #  Psi <- Psi.new[ind,]
-          #  y.tilde <- y.tilde.new[ind]
-          #}else{
             Psi <- Psi.new
             y.tilde <- y.tilde.new
-          #}
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -164,20 +154,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
       for (s in 1:length(qprob)) {
         y.tilde.new <- rep(1, nrow(Psi.new))
         y.tilde.new[y < qy[s]] <- -1  #s
-      #  pos.rate <- sum(y.tilde.new==1)/nrow(Psi.new)
-      #  neg.rate <- sum(y.tilde.new==-1)/nrow(Psi.new)
         for(iter in 1:max.iter){
-          #if(stochastic == TRUE){  ###stratified sampling
-          #  set.seed(iter)
-          #  pos.ind <- sample(which(y.tilde.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-          #  neg.ind <- sample(which(y.tilde.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-          #  ind <- c(pos.ind,neg.ind)
-          #  Psi <- Psi.new[ind,]
-          #  y.tilde <- y.tilde.new[ind]
-          #}else{
             Psi <- Psi.new
             y.tilde <- y.tilde.new
-          #}
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -200,20 +179,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
         stop("response variable should be a binary type!")
       y.new <- y
       for (s in 1:length(qprob)) {
-      #  pos.rate <- sum(y.new==1)/nrow(Psi.new)
-      #  neg.rate <- sum(y.new==-1)/nrow(Psi.new)
         for(iter in 1:max.iter){
-          #if(stochastic == TRUE){  ###stratified sampling
-          #  set.seed(iter)
-          #  pos.ind <- sample(which(y.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-          #  neg.ind <- sample(which(y.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-          #  ind <- c(pos.ind,neg.ind)
-          #  Psi <- Psi.new[ind,]
-          #  y.bi <- y.new[ind]
-          #}else{
             Psi <- Psi.new
             y.bi <- y.new
-          #}
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -240,20 +208,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
       for (s in 1:length(qprob)) {
         y.tilde.new <- rep(1, nrow(Psi.new))
         y.tilde.new[y < qy[s]] <- -1  #s
-        #pos.rate <- sum(y.tilde.new==1)/nrow(Psi.new)
-        #neg.rate <- sum(y.tilde.new==-1)/nrow(Psi.new)
         for(iter in 1:max.iter){
-        #  if(stochastic == TRUE){  ###stratified sampling
-        #    set.seed(iter)
-        #    pos.ind <- sample(which(y.tilde.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-        #    neg.ind <- sample(which(y.tilde.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-        #    ind <- c(pos.ind,neg.ind)
-        #    Psi <- Psi.new[ind,]
-        #    y.tilde <- y.tilde.new[ind]
-        #  }else{
             Psi <- Psi.new
             y.tilde <- y.tilde.new
-         # }
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -278,20 +235,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
         stop("response variable should be a binary type!")
       y.new <- y
       for (s in 1:length(qprob)){
-        #pos.rate <- sum(y.new==1)/nrow(Psi.new)
-        #neg.rate <- sum(y.new==-1)/nrow(Psi.new)
         for(iter in 1:max.iter){
-        #  if(stochastic == TRUE){  ###stratified sampling
-        #    set.seed(iter)
-        #    pos.ind <- sample(which(y.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-        #    neg.ind <- sample(which(y.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-        #    ind <- c(pos.ind,neg.ind)
-        #    Psi <- Psi.new[ind,]
-        #    y.bi <- y.new[ind]
-        #  }else{
             Psi <- Psi.new
             y.bi <- y.new
-        # }
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -316,20 +262,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
         stop("response variable should be a binary type!")
       y.new <- y
       for (s in 1:length(qprob)) {
-        #pos.rate <- sum(y.new==1)/nrow(Psi.new)
-        #neg.rate <- sum(y.new==-1)/nrow(Psi.new)
         for(iter in 1:max.iter){
-        #  if(stochastic == TRUE){  ###stratified sampling
-        #    set.seed(iter)
-        #    pos.ind <- sample(which(y.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-        #    neg.ind <- sample(which(y.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-        #    ind <- c(pos.ind,neg.ind)
-        #    Psi <- Psi.new[ind,]
-        #    y.bi <- y.new[ind]
-        #  }else{
             Psi <- Psi.new
             y.bi <- y.new
-        #  }
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -357,20 +292,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
       for (s in 1:length(qprob)) {
         y.tilde.new <- rep(1, nrow(Psi.new))
         y.tilde.new[y < qy[s]] <- -1  #s
-        #pos.rate <- sum(y.tilde.new==1)/nrow(Psi.new)
-        #neg.rate <- sum(y.tilde.new==-1)/nrow(Psi.new)
         for(iter in 1:max.iter){
-        #  if(stochastic == TRUE){  ###stratified sampling
-        #    set.seed(iter)
-        #    pos.ind <- sample(which(y.tilde.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-        #    neg.ind <- sample(which(y.tilde.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-        #    ind <- c(pos.ind,neg.ind)
-        #    Psi <- Psi.new[ind,]
-        #    y.tilde <- y.tilde.new[ind]
-        #  }else{
             Psi <- Psi.new
             y.tilde <- y.tilde.new
-        #  }
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -397,20 +321,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
         stop("response variable should be a binary type!")
       y.new <- y
       for (s in 1:length(qprob)){
-        #pos.rate <- sum(y.new==1)/nrow(Psi.new)
-        #neg.rate <- sum(y.new==-1)/nrow(Psi.new)
         for(iter in 1:max.iter){
-        # if(stochastic == TRUE){  ###stratified sampling
-        #    set.seed(iter)
-        #    pos.ind <- sample(which(y.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-        #    neg.ind <- sample(which(y.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-        #    ind <- c(pos.ind,neg.ind)
-        #    Psi <- Psi.new[ind,]
-        #    y.bi <- y.new[ind]
-        #  }else{
             Psi <- Psi.new
             y.bi <- y.new
-        #  }
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -437,15 +350,8 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
         stop("response variable should be continuous!")
       for (s in 1:length(pi.grid)) {
         for(iter in 1:max.iter){
-        #  if(stochastic == TRUE){  ###stratified sampling
-        #    set.seed(iter)
-        #    ind <- sample(length(y), sqrt(p*length(y))) #sqrt(np)
-        #    Psi <- Psi.new[ind,]
-        #    y.new <- y[ind]
-        #  }else{
             Psi <- Psi.new
             y.new <- y
-        #  }
           n <- nrow(Psi)
           w <- w.init
           A <- t(Psi)%*%Psi
@@ -511,21 +417,10 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
       for(s in 1:length(qprob)){
         y.tilde.new <- rep(1, nrow(Psi.new))
         y.tilde.new[y < qy[s]] <- -1  #s
-        #pos.rate <- sum(y.tilde.new==1)/nrow(Psi.new)
-        #neg.rate <- sum(y.tilde.new==-1)/nrow(Psi.new)
         w <- w.init
         for(iter in 1:max.iter){
-         # if(stochastic == TRUE){  ###stratified sampling
-         #    set.seed(iter)
-         #    pos.ind <- sample(which(y.tilde.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-          #  neg.ind <- sample(which(y.tilde.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-          #  ind <- c(pos.ind,neg.ind)
-          #  Psi <- Psi.new[ind,]
-          #  y.tilde <- y.tilde.new[ind]
-          #}else{
             Psi <- Psi.new
             y.tilde <- y.tilde.new
-          #}
           n <- nrow(Psi)
           derivative.vec <- rep(0,p)
           for (k in 1:p){
@@ -547,21 +442,10 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
     if(sum(unique(y))==0){
       y.new <- y
       for(s in 1:length(qprob)){
-        #pos.rate <- sum(y.new==1)/nrow(Psi.new)
-        #neg.rate <- sum(y.new==-1)/nrow(Psi.new)
         w <- w.init
         for(iter in 1:max.iter){
-        #  if(stochastic == TRUE){  ###stratified sampling
-        #    set.seed(iter)
-        #    pos.ind <- sample(which(y.new==1), ceiling((nrow(Psi.new)/(log(nrow(Psi.new))))*pos.rate))
-        #    neg.ind <- sample(which(y.new==-1), floor((nrow(Psi.new)/(log(nrow(Psi.new))))*neg.rate))
-        #    ind <- c(pos.ind,neg.ind)
-        #    Psi <- Psi.new[ind,]
-        #    y.bi <- y.new[ind]
-        #  }else{
             Psi <- Psi.new
             y.bi <- y.new
-        #  }
           n <- nrow(Psi)
           derivative.vec <- rep(0,p)
           for (k in 1:p){
@@ -585,7 +469,6 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
     u <- result$values
     obj <- list(evector = v, evalue = u, obj.psi = psi.gen)
     class(obj) <- "npsdr"
-    #structure(class = "npsdr", obj)
     return(obj)
   }
 
@@ -627,6 +510,21 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k = floor(lengt
 }
 
 
+#' @noRd
+#' @export
+get.psi <- function(x, y, k=floor(length(y)/3)) {
+  n <- nrow(x)
+  x <- scale(x)
+  bw <- 1/mean(as.numeric(dist(x)))^2 # bw parameter for kernel
 
+  Kn <- svmpath::radial.kernel(x, x, bw)
+  Qn <- diag(n) - matrix(1/n, n, n)
 
+  eigen.psi <- eigen(Qn %*% Kn %*% Qn)
+  Psi.new <- eigen.psi$vectors[,1:k, drop = F] # Psi
+  l <- eigen.psi$values[1:k]             # eigen
+  tmp.obj <- list("w"=Psi.new, "l"=l, "scaled.x"= x, "bw" = bw, "k" = k)
+  class(tmp.obj) <- "npsdr"
+  return(tmp.obj)
+}
 

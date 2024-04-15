@@ -16,7 +16,7 @@
 #'@examples
 #'\donttest{
 #'set.seed(1234)
-#'n <- 300; n2 <- 500; p <- 5; H <- 10; lambda <- 0.1;
+#'n <- 500; n2 <- 300; p <- 5; H <- 10; lambda <- 0.1;
 #'x <- matrix(rnorm(n*p, 0, 1), n, p)
 #'x.new <- matrix(rnorm(n2*p, 0, 1), n2, p)
 #'err <- rnorm(n, 0, .2); err.new <- rnorm(n2, 0, .2)
@@ -30,11 +30,18 @@
 #'fx.new <-  x1.new/(0.5 + (x2.new + 1)^2)
 #'y <- fx + err;                     y.new <- fx.new + err.new
 #'y.binary <- c(sign(fx + err));     y.binary.new <- c(sign(fx.new + err.new))
+#'#real time least squares forward
 #'ls <- psdr(x, y, H=10, lambda=0.1, loss="ls")
+#'ls$vectors
+#'rt_ls <- rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, X=x.new, y=y.new,
+#'         direction="forward", H, lambda)
+#'rt_ls$vectors
+#'#real time weighted least squares backward
 #'wls <- psdr(x, y.binary, H=10, lambda=0.1, loss="wls")
-#'rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, X=x.new, y=y.new, direction="forward", H, lambda)
-#'rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, X=x.new, y=y.binary.new,
-#' direction="forward", H, lambda)
+#'wls$vectors
+#' rt_wls <- rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, X=x.new, y=y.binary.new,
+#'                direction="backward", H, lambda)
+#'rt_wls$vectors
 #'}
 #'@import stats
 #'@export rtpsdr
@@ -192,7 +199,7 @@ rtpsdr <- function(A, r, n, Xbar, X, y, direction="forward", H=NULL, lambda=NULL
 print.rtpsdr <- function(x, ...) {
   obj <- x
   d <- list(x = obj$x, y = obj$y, Mn= obj$Mn, evalues = obj$values, evectors = obj$vectors, N=obj$n, Xbar=  apply(obj$x, 2, mean), r=obj$r.H, A=obj$A)
-  writeLines("psdr result:")
+  writeLines("real time psdr result:")
   print(d, ...)
   invisible(d)
 }
@@ -203,8 +210,8 @@ print.rtpsdr <- function(x, ...) {
 #' @export
 plot.rtpsdr <- function(x, dim=2, ...) {
   obj <- x
-  if (!inherits(obj, "psdr"))
-    stop("use only with \"psdr\" objects")
+  if (!inherits(obj, "rtpsdr"))
+    stop("use only with \"rtpsdr\" objects")
   temp <- obj$vectors
   obj_psdr <- obj$x %*% temp
   par(mfrow=c(ceiling(sqrt(dim)), ceiling(sqrt(dim))))

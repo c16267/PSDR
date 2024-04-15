@@ -12,7 +12,7 @@ npsdr(
   lambda = NULL,
   delta = NULL,
   k = floor(length(y)/3),
-  eps = 1e-05,
+  eps = 1e-04,
   max.iter = NULL,
   loss = NULL,
   a = NULL,
@@ -34,7 +34,7 @@ npsdr(
 
 \item{k}{number of basis functions for a kernel trick, floor(length(y)/3) is default}
 
-\item{eps}{threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-5}
+\item{eps}{threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-4}
 
 \item{max.iter}{maximum iteration number for the optimization process. default value is 30}
 
@@ -71,10 +71,21 @@ y <- c(fx + err) # response
 y.binary <- sign(y)
 npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
                max.iter, loss="svm")
+
+##real data: Wisconsin diagnostic breast cancer data
+data(wisc)
+x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
+y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
+my.obj <- npsdr(x.wisc,y.wisc,H=10,lambda=0.0001,delta=0.05, k=floor(length(y.wisc)/3),
+             eps, max.iter=100,loss="wlogistic")
+x.nsvm <- phix(x.wisc, my.obj)
+boxplot.default(x.nsvm[y.wisc == 1,1], x.nsvm[y.wisc != 1,1], xlab = "Y", axes = FALSE,
+       ylab = expression(hat(phi)[1](x)))
+axis(1, seq(0.5, 2.5, by = 0.5), c(NA, "+1", NA, "-1", NA)); axis(2, las = 1)
 }
 }
 \seealso{
-\code{\link{new.y}}
+\code{\link{new.y}}, \code{\link{phix}}
 }
 \author{
 Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}

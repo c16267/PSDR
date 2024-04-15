@@ -1,7 +1,6 @@
 #'Predict a response variable for the new explanatory variables
-#' @description
+#'@description
 #'Predict a response after reducing a input data dimension when the response and the input variable have a nonlinear functional relationship.
-#'
 #'@param x The object from function npsdr
 #'@param new.x new data X
 #'@param d true dimension for data x. d=2 is default
@@ -32,7 +31,7 @@
 #'obj <- npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps, max.iter, loss="svm")
 #'new.y(x=obj, new.x, d = 2) }
 #'@import stats graphics svmpath
-#'@export
+#'@export new.y
 
 new.y <- function(x, new.x, d = 2, ...){
   obj <- x
