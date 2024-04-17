@@ -1,20 +1,19 @@
 #'Pre-embedded arbitrary loss
-#' @noRd
 
-# fn_arbitrary <- function(object){UseMethod("fn_arbitrary")}
-# my.logistic <- function(object){UseMethod("my.logistic")}
-# my.hinge <- function(object){UseMethod("my.hinge")}
-# my.l2svm <- function(object){UseMethod("my.l2svm")}
-# my.lum <- function(object){UseMethod("my.lum")}
-# my.quantile <- function(object){UseMethod("my.quantile")}
-# my.asymLS <- function(object){UseMethod("my.asymLS")}
-# fn_arbitrary_loss <- function(object){UseMethod("fn_arbitrary_loss")}
-# fn_arbitrary_binary_loss <- function(object){UseMethod("fn_arbitrary_binary_loss")}
-# fn_arbitrary_nonlinear_loss <- function(object){UseMethod("fn_arbitrary_nonlinear_loss")}
-# fn_arbitrary_nonlinear_binary_loss <- function(object){UseMethod("fn_arbitrary_nonlinear_binary_loss")}
-# wvec <- function(object){UseMethod("wvec")}
-# d2 <- function(object){UseMethod("d2")}
-# E <- function(object){UseMethod("E")}
+fn_arbitrary <- function(object){UseMethod("fn_arbitrary")}
+my.logistic <- function(object){UseMethod("my.logistic")}
+my.hinge <- function(object){UseMethod("my.hinge")}
+my.l2svm <- function(object){UseMethod("my.l2svm")}
+my.lum <- function(object){UseMethod("my.lum")}
+my.quantile <- function(object){UseMethod("my.quantile")}
+my.asymLS <- function(object){UseMethod("my.asymLS")}
+fn_arbitrary_loss <- function(object){UseMethod("fn_arbitrary_loss")}
+fn_arbitrary_binary_loss <- function(object){UseMethod("fn_arbitrary_binary_loss")}
+fn_arbitrary_nonlinear_loss <- function(object){UseMethod("fn_arbitrary_nonlinear_loss")}
+fn_arbitrary_nonlinear_binary_loss <- function(object){UseMethod("fn_arbitrary_nonlinear_binary_loss")}
+wvec <- function(object){UseMethod("wvec")}
+d2 <- function(object){UseMethod("d2")}
+E <- function(object){UseMethod("E")}
 
 # get.psi <- function(object){UseMethod("get.psi")}
 # psi.function <- function(object){UseMethod("psi.function")}
@@ -146,9 +145,6 @@ d2 <- function(Bhat, B) {
   return(norm(B%*%solve(t(B)%*%B)%*%t(B)-Bhat%*%solve(t(Bhat)%*%Bhat)%*%t(Bhat),"f"))
 }
 
-###############################################
-##auxilary functions for nonlinear prediction##
-###############################################
 
 
 

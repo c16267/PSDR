@@ -17,18 +17,18 @@ Ten real-valued features are computed for each cell nucleus:
 }
 \details{
 \itemize{
-\item ID number
-\item Diagnosis (M = malignant, B = benign)
-\item radius (mean of distances from center to points on the perimeter)
-\item texture (standard deviation of gray-scale values)
-\item perimeter
-\item area
-\item smoothness (local variation in radius lengths)
-\item compactness (perimeter^2 / area - 1.0)
-\item concavity (severity of concave portions of the contour)
-\item concave points (number of concave portions of the contour)
-\item symmetry
-\item fractal dimension ("coastline approximation" - 1)
+  \item ID number
+  \item Diagnosis (M = malignant, B = benign)
+  \item radius (mean of distances from center to points on the perimeter)
+  \item texture (standard deviation of gray-scale values)
+  \item perimeter
+  \item area
+  \item smoothness (local variation in radius lengths)
+  \item compactness (perimeter^2 / area - 1.0)
+  \item concavity (severity of concave portions of the contour)
+  \item concave points (number of concave portions of the contour)
+  \item symmetry
+  \item fractal dimension ("coastline approximation" - 1)
 }
 }
 \keyword{datasets}

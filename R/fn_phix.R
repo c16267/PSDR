@@ -1,11 +1,20 @@
-#'A function of yielding nonlinear mapping of X onto the reduced dimension
+#'A function of yielding nonlinear mapping of \eqn{\mathbf{x}} onto the reduced dimension
 #'@description
-#'A function of yielding nonlinear mapping of X onto the reduced dimension
-#'@param value data matrix X
-#'@param obj the object from function 'npsdr'
-#'@param order the structural dimensionality
-#'@return Return the value of a nonlinear Mapping X to the reduced dimension of rank 2 via the kernel function
-#'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+#'A function of yielding nonlinear mapping of \eqn{\mathbf{x}} onto the reduced dimension
+#'@param value data matrix \eqn{\mathbf{x}}
+#'@param object the object from function 'npsdr'
+#'@param d the structural dimensionality. The default is \eqn{d=2}
+#'@return An object with S3 class "npsdr". Details are listed below.Return the value of
+#'a nonlinear Mapping \eqn{\mathbf{x}} to the reduced dimension of rank 2 via the kernel function \eqn{\phi(\mathbf{x})}
+#' \item{\code{w}}{the first d leading eigenvectors of the matrix \eqn{\mathbf{Q}\mathbf{K}\mathbf{Q}} in Li B. et. al., (2011)}
+#' \item{\code{l}}{the first d leading eigenvectors of the matrix \eqn{\mathbf{Q}\mathbf{K}\mathbf{Q}}}
+#' \item{\code{scaled.x}}{scaled \eqn{\mathbf{x}}}
+#' \item{\code{bw}}{bandwidth of the kernel function}
+#' \item{\code{k}}{parameter for the kernel, \code{floor(length(n)/3)} is applied as a default}
+#'@references Li, B., Artemiou, A. and Li, L. (2011)
+#' \emph{Principal support vector machines for linear and
+#' nonlinear sufficient dimension reduction, Annals of Statistics 39(6): 3182–3210}.
+#' @author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
 #'@seealso \code{\link{npsdr}}
 #'@examples
 #'\donttest{
@@ -26,37 +35,36 @@
 #'fx <-  x1/(0.5 + (x2 + 1)^2)
 #'y <- c(fx + err) # response
 #'y.binary <- sign(y)
-#'my.obj <- npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
+#'obj <- npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
 #'                max.iter, loss="svm")
-#'x.nsvm <- phix(value=x, obj=my.obj, order=2)
+#'phix(value=x, object=obj, d=2)
 #'}
 #'@import stats svmpath
 #'@export phix
 
-phix <- function(value, obj, order = 2) {
+phix <- function(value, object, d = 2) {
   psi.function <- psi.function
   x <- value
-  v <- obj$evector
-  w <- obj$obj.psi$w
-  l <- obj$obj.psi$l
+  v <- object$evector
+  w <- object$obj.psi$w
+  l <- object$obj.psi$l
   p <- dim(x)[2]
   kernel.function <- kernel.function(x, y=x, param.kernel = 1/p)
   tau <- mean(as.numeric(dist(x)))
   kernel.param <- 1/tau^2
   p <- ncol(x)
   if (length(value) == p) {
-    temp <- psi.function(value, x, v[,1:order, drop = F], w, l, kernel.function, kernel.param)
+    temp <- psi.function(value, x, v[,1:d, drop = F], w, l, kernel.function, kernel.param)
   } else if (ncol(value) == p) {
-    temp <- t(apply(value, 1, psi.function, x, v[,1:order, drop = F], w, l, kernel.function, kernel.param))
+    temp <- t(apply(value, 1, psi.function, x, v[,1:d, drop = F], w, l, kernel.function, kernel.param))
   } else if (nrow(value) == p) {
-    temp <- t(apply(value, 2, psi.function, x, v[,1:order, drop = F], w, l, kernel.function, kernel.param))
+    temp <- t(apply(value, 2, psi.function, x, v[,1:d, drop = F], w, l, kernel.function, kernel.param))
   } else stop("check `str(value)`")
   temp
 }
 
 
 #'@noRd
-#'@export
 psi.function <- function(value, x, v, w, l, kernel.function, kernel.param){
   value <- matrix(value, 1, length(value))
   temp <- kernel.function(value, x, kernel.param)
@@ -68,7 +76,6 @@ psi.function <- function(value, x, v, w, l, kernel.function, kernel.param){
 
 
 #'@noRd
-#'@export
 kernel.function <- function (x, y = x, param.kernel = 1/p) {
   n <- nrow(x)
   m <- nrow(y)

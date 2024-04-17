@@ -22,39 +22,66 @@ psdr(
 )
 }
 \arguments{
-\item{x}{data matrix}
+\item{x}{input matrix, of dimension \code{nobs} x \code{nvars}; each row is an observation vector. Requirement: \code{nvars}>1; in other words, \code{x} should have 2 or more columns.}
 
-\item{y}{either continuous or (+1,-1) typed binary response vector}
+\item{y}{response variable, either can be continuous variable or (+1,-1) coded binary response vector}
 
-\item{init}{initial coefficient vector. If not specified, random vector from standard normal distribution is applied by default}
+\item{init}{initial coefficient vector of which dimension matches the \code{nvar} of \eqn{\mathbf{X}}. If it is not specified, random vector from standard normal distribution is applied by default}
 
-\item{H}{the number of slices. default value is 10}
+\item{H}{the number of slices and probabilities equally spaced in \eqn{(0,1)}. default value is 10}
 
-\item{lambda}{hyperparameter for the loss function. default value is 0.1}
+\item{lambda}{the cost parameter for the svm loss function. The default value is 0.1}
 
-\item{delta}{learning rate for gradient descent method. default value is 0.1}
+\item{delta}{learning rate for the gradient descent algorithm. The default value is 0.1}
 
-\item{h}{very small interval for calculating numerical derivatives for a given arbitrary loss function, default is 1.0e-5}
+\item{h}{very small interval for calculating numerical derivatives for a given arbitrary loss function. The default is 1.0e-5}
 
-\item{eps}{threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-5}
+\item{eps}{the threshold for stopping iteration with respect to the magnitude of the change of the derivative. The default value is 1.0e-5}
 
 \item{max.iter}{maximum iteration number for the optimization process. default value is 30}
 
-\item{loss}{pre-specified loss functions are "logistic", svm","l2svm","lwpsvm", and user-defined loss function object also can be used formed by inside double quotation mark}
+\item{loss}{pre-specified loss functions are "logistic", "svm","l2svm","lwsvm", etc. and user-defined loss function object also can be used formed by inside double quotation mark}
 
 \item{a}{the first hyperparameter for the LUM loss function}
 
-\item{c}{second hyperparameter for the LUM loss function}
+\item{c}{the second hyperparameter for the LUM loss function}
 
-\item{stochastic}{specify whether the user want to use the stochastic gradient descent algorithm. default is FALSE}
+\item{stochastic}{If \code{TRUE} then the stochastic gradient descent algorithm will be implemented to optimize the loss function. The default is FALSE}
 
-\item{plot}{visualize user defined loss function. default is FALSE}
+\item{plot}{If \code{TRUE} then it produces scatter plots of \eqn{Y} versus \eqn{\hat{B^{\top}}_{j}\mathbf{X}}. \eqn{j} can be specified by the user with \eqn{j=2} as a default. The default is FALSE}
 }
 \value{
-An estimated basis for central subspace and its eigenvalues and eigenvectors for SDR is returned
+An object with S3 class "psdr". Details are listed below.
+\item{\code{Mn}}{The estimated working matrix, which is obtained by the cumulative
+outer product of the estimated parameters over H}
+\item{\code{evalues}}{Eigenvalues of the Mn}
+\item{\code{evectors}}{Eigenvectors of the Mn, the first leading d eigenvectors consists
+the basis of the central subspace}
 }
 \description{
-Principal Sufficient Dimension Reduction methods
+A unified and user-friendly \proglang{R} package for applying the principal sufficient dimension reduction methods for both linear and nonlinear ,and regression and classification context.
+The package has an extendable power by varying loss functions for the SVM, even for an user-defined arbitrary function,
+unless those are convex and differentiable everywhere over the support.
+Also, it provides a realtime sufficient dimension reduction update procedure using the principal least squares SVM.
+}
+\details{
+Details on \code{loss} option:
+
+The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method. For example, \code{loss="ls"} means that the user can do SDR with
+least square SVM. The package provides several pre-embeded functions. 1. for regression problem: \code{loss="svm"} is the hinge loss, \code{loss="logstic"} is the logistic loss, \code{loss="l2svm"} is the squared hinge loss,
+\code{loss="LUM"} is for the large margin unified loss, \code{loss="asymls"} is for asymmetric least square loss
+2. Also the corresponding weighted loss functions are included, such as, \code{loss="lwsvm"} , \code{loss="wlogistic"}, \code{loss="l2wsvm"},
+\code{loss="wLUM"} and \code{loss="wls"}, which mean weighted hinge loss, weighted logistic loss, weighted squared hinge loss, weighted LUM loss and weighted least square loss, respectively.
+
+Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
+Two examples of the usage of user-defined losses are presented below (\code{m} represents a margin):
+
+\code{myLogistic <- function(m,...){rslt <- log(1+exp(-m)) return(rslt)}},
+
+\code{myLS <- function(m,...){rslt <- (1-m)^2 return(rslt)}}.
+
+Users can define their own loss function in advance, and apply those functions to \code{psdr} like \code{loss="myLogistic"}
+or \code{loss="myLS"}.
 }
 \examples{
 \donttest{
@@ -76,14 +103,13 @@ x2 <- x \%*\% B[,2]
 fx <-  x1/(0.5 + (x2 + 1)^2)
 y <- c(fx + err) # response
 my.hinge <- function(m,...){
- rslt <- (1-m)*(as.numeric((1-m) > 0))
- return(rslt)
+  rslt <- (1-m)*(as.numeric((1-m) > 0))
+  return(rslt)
 }
 obj <- psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
 psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="my.hinge")
 print(obj)
 plot(obj)
-
 
 ##real data: Boston housing data
 data("BostonHousing")
@@ -110,7 +136,7 @@ x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
 y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
 init.theta <- rnorm(dim(x.wisc)[2],0,1)
 wisc.obj <- psdr(x.wisc, y.wisc, init.theta, H=20,lambda=0.1, h=1.0e-6,
-                delta=0.5,eps=10^-4, max.iter=30, loss="wlogistic")
+                 delta=0.5,eps=10^-4, max.iter=30, loss="wlogistic")
 value.lsvm <- wisc.obj$values
 lsvm <- round(wisc.obj$vectors,3)
 x.lsvm <- x.wisc \%*\% lsvm
@@ -120,9 +146,34 @@ points(x.lsvm[y.wisc == 1,1], x.lsvm[y.wisc == 1,2], col = 4, pch = "+")
 points(x.lsvm[y.wisc != 1,1], x.lsvm[y.wisc != 1,2], col = 2)
 }
 }
+\references{
+Artemiou, A. and Dong, Y. (2016)
+\emph{Sufficient dimension reduction via principal lq support vector machine,
+ Electronic Journal of Statistics 10: 783–805}.\cr
+ Artemiou, A., Dong, Y. and Shin, S. J. (2021)
+\emph{Real-time sufficient dimension reduction through principal least
+ squares support vector machines, Pattern Recognition 112: 107768}.\cr
+ Kim, B. and Shin, S. J. (2019)
+\emph{Principal weighted logistic regression for sufficient dimension
+reduction in binary classification, Journal of the Korean Statistical Society 48(2): 194–206}.\cr
+ Li, B., Artemiou, A. and Li, L. (2011)
+\emph{Principal support vector machines for linear and
+nonlinear sufficient dimension reduction, Annals of Statistics 39(6): 3182–3210}.\cr
+Soale, A.-N. and Dong, Y. (2022)
+\emph{On sufficient dimension reduction via principal asymmetric
+ least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
+ Wang, C., Shin, S. J. and Wu, Y. (2018)
+\emph{Principal quantile regression for sufficient dimension
+ reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
+ Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
+\emph{Principal weighted support vector machines for sufficient dimension reduction in
+ binary classification, Biometrika 104(1): 67–81}. \cr
+ Li, L. (2007)
+\emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
+}
 \seealso{
-\code{plot.psdr}
+\code{\link{plot}}, \code{\link{print}}, \code{\link{crBIC}}
 }
 \author{
-Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
 }

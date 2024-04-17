@@ -1,12 +1,13 @@
 #'Predict a response variable for the new explanatory variables
 #'@description
 #'Predict a response after reducing a input data dimension when the response and the input variable have a nonlinear functional relationship.
-#'@param x The object from function npsdr
-#'@param new.x new data X
-#'@param d true dimension for data x. d=2 is default
+#'@param object The object from function \code{npsdr}
+#'@param newdata new data X
+#'@param d structural dimensionality. d=2 is default.
 #'@param ... additional arguments affecting the predictions produced.
-#'@return Estimated response variable y return
-#'@author Jungmin Shin, \email{jungminshin@korea.ac.kr}, SeungJun Shin, \email{sjshin@korea.ac.kr}
+#'@return the value of the estimated nonlinear mapping \eqn{\phi(\cdot)} is applied to
+#' newdata \eqn{X} with dimension d is returned.
+#' @author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
 #'@seealso \code{\link{npsdr}}
 #'@examples
 #'\donttest{
@@ -29,12 +30,12 @@
 #'y.binary <- sign(y)
 #'new.x <- matrix(rnorm(n*p, 0, 2), n, p)
 #'obj <- npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps, max.iter, loss="svm")
-#'new.y(x=obj, new.x, d = 2) }
+#'npsdrx(object=obj, newdata=new.x, d = 2) }
 #'@import stats graphics svmpath
-#'@export new.y
+#'@export npsdrx
 
-new.y <- function(x, new.x, d = 2, ...){
-  obj <- x
+npsdrx <- function(object, newdata, d = 2, ...){
+  obj <- object
   if (!inherits(obj, "npsdr"))
     stop("use only with \"npsdr\" objects")
   x.obj <- obj$obj.psi$scaled.x
@@ -52,7 +53,7 @@ new.y <- function(x, new.x, d = 2, ...){
   n <- nrow(x.obj)
   x <- matrix(x.obj, n, p)
 
-  n.new <- length(new.x)/p
+  n.new <- length(newdata)/p
 
   new.x <- matrix(new.x, n.new, p)
   new.x <- t((t(new.x) - m)/s)
@@ -64,7 +65,7 @@ new.y <- function(x, new.x, d = 2, ...){
     f[j,] <- crossprod(rep(1, n), w * Kern.c[,j])/l
   }
   pred <- f %*% v[,1:d, drop = F]
-  class(pred) <- "npsdr"
+  #class(pred) <- "npsdr"
   return(pred)
 }
 

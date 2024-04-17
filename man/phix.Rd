@@ -2,22 +2,28 @@
 % Please edit documentation in R/fn_phix.R
 \name{phix}
 \alias{phix}
-\title{A function of yielding nonlinear mapping of X onto the reduced dimension}
+\title{A function of yielding nonlinear mapping of \eqn{\mathbf{x}} onto the reduced dimension}
 \usage{
-phix(value, obj, order = 2)
+phix(value, object, d = 2)
 }
 \arguments{
-\item{value}{data matrix X}
+\item{value}{data matrix \eqn{\mathbf{x}}}
 
-\item{obj}{the object from function 'npsdr'}
+\item{object}{the object from function 'npsdr'}
 
-\item{order}{the structural dimensionality}
+\item{d}{the structural dimensionality. The default is \eqn{d=2}}
 }
 \value{
-Return the value of a nonlinear Mapping X to the reduced dimension of rank 2 via the kernel function
+An object with S3 class "npsdr". Details are listed below.Return the value of
+a nonlinear Mapping \eqn{\mathbf{x}} to the reduced dimension of rank 2 via the kernel function \eqn{\phi(\mathbf{x})}
+\item{\code{w}}{the first d leading eigenvectors of the matrix \eqn{\mathbf{Q}\mathbf{K}\mathbf{Q}} in Li B. et. al., (2011)}
+\item{\code{l}}{the first d leading eigenvectors of the matrix \eqn{\mathbf{Q}\mathbf{K}\mathbf{Q}}}
+\item{\code{scaled.x}}{scaled \eqn{\mathbf{x}}}
+\item{\code{bw}}{bandwidth of the kernel function}
+\item{\code{k}}{parameter for the kernel, \code{floor(length(n)/3)} is applied as a default}
 }
 \description{
-A function of yielding nonlinear mapping of X onto the reduced dimension
+A function of yielding nonlinear mapping of \eqn{\mathbf{x}} onto the reduced dimension
 }
 \examples{
 \donttest{
@@ -38,14 +44,19 @@ x2 <- x \%*\% B[,2]
 fx <-  x1/(0.5 + (x2 + 1)^2)
 y <- c(fx + err) # response
 y.binary <- sign(y)
-my.obj <- npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
+obj <- npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
                max.iter, loss="svm")
-x.nsvm <- phix(value=x, obj=my.obj, order=2)
+phix(value=x, object=obj, d=2)
 }
+}
+\references{
+Li, B., Artemiou, A. and Li, L. (2011)
+\emph{Principal support vector machines for linear and
+nonlinear sufficient dimension reduction, Annals of Statistics 39(6): 3182–3210}.
 }
 \seealso{
 \code{\link{npsdr}}
 }
 \author{
-Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
 }

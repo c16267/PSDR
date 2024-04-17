@@ -1,4 +1,4 @@
-docType: Package
+Type: Package
 Package: upsdr
 Title: Unified Principal Sufficient Dimension Reduction Package
 Version: 1.0.0
@@ -7,7 +7,6 @@ Maintainer: Jungmin Shin <jungminshin@korea.ac.kr>
 Description: A unified and user-friendly framework for applying the principal sufficient dimension reduction methods for both linear and nonliear cases. The package has an extendable power by varying loss functions for the SVM, even for an user-defined arbitrary function, unless those are convex and differentiable everywhere over the support. Also, it provides a realtime sufficient dimension reduction update procedure using the principal least squares SVM.
 License: GPL-2
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
 Imports:
       stats,
       graphics,
@@ -15,3 +14,4 @@ Imports:
 Suggests:
       testthat
 RoxygenNote: 7.2.3
+Roxygen: list (markdown = TRUE, roclets = c ("namespace", "rd", "srr::srr_stats_roclet"))

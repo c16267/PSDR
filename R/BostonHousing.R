@@ -1,8 +1,6 @@
 #' Boston house price data
-#' The Boston house-price data of Harrison, D. and Rubinfeld, D.L.
-#' 'Hedonic prices and the demand for clean air', J. Environ. Economics & Management, vol.5, 81-102, 1978.
-#' Used in Belsley, Kuh & Welsch, 'Regression diagnostics, Wiley, 1980.
-#' N.B. Various transformations are used in the table on pages 244-261 of the latter.
+#' The Boston Housing Dataset is a derived from information collected by
+#' the U.S. Census Service concerning housing in the area of Boston MA
 #'
 #' \itemize{
 #'   \item crim     per capita crime rate by town
@@ -20,10 +18,14 @@
 #'   \item stat    percent lower status of the population
 #'   \item mdev     Median value of owner-occupied homes in $1000's
 #' }
-#'
+#' @author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+#' @references Harrison, D. and Rubinfeld, D.L. (1978)
+#' \emph{Hedonic prices and the demand for clean air, J. Environ. Economics & Management, vol.5, 81-102}.\cr
+#' Belsley, Kuh & Welsch. (1980)
+#' \emph{Regression diagnostics, pp.244-261, Wiley}.
 #' @docType data
 #' @keywords datasets
 #' @name BostonHousing
 #' @usage data(BostonHousing)
-#' @format A data frame with 506 rows and 14 variables
+#' @format A data frame with 506 rows and 14 variables.
 NULL
