@@ -2,9 +2,9 @@
 % Please edit documentation in R/fn_rtpsdr.R
 \name{rtpsdr}
 \alias{rtpsdr}
-\title{Real time sufficient dimension reduction through principal least squares SVM}
+\title{Real time sufficient dimension reduction through principal least squares regression}
 \usage{
-rtpsdr(A, r, n, Xbar, X, y, direction = "forward", H = NULL, lambda = NULL)
+rtpsdr(A, r, n, Xbar, x, y, direction = "forward", H = NULL, lambda = NULL)
 }
 \arguments{
 \item{A}{a temporal matrix produced by the previous estimation with original data}
@@ -15,7 +15,7 @@ rtpsdr(A, r, n, Xbar, X, y, direction = "forward", H = NULL, lambda = NULL)
 
 \item{Xbar}{a mean vector from the original data}
 
-\item{X}{X in new data}
+\item{x}{x in new data}
 
 \item{y}{y in new data, y is continuous}
 
@@ -68,13 +68,13 @@ y.binary <- c(sign(fx + err));     y.binary.new <- c(sign(fx.new + err.new))
 #real time least squares forward
 ls <- psdr(x, y, H=10, lambda=0.1, loss="ls")
 ls$vectors
-rt_ls <- rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, X=x.new, y=y.new,
+rt_ls <- rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, x=x.new, y=y.new,
         direction="forward", H, lambda)
 rt_ls$vectors
 #real time weighted least squares backward
 wls <- psdr(x, y.binary, H=10, lambda=0.1, loss="wls")
 wls$vectors
-rt_wls <- rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, X=x.new, y=y.binary.new,
+rt_wls <- rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, x=x.new, y=y.binary.new,
                direction="backward", H, lambda)
 rt_wls$vectors
 }
@@ -82,26 +82,26 @@ rt_wls$vectors
 \references{
 Artemiou, A. and Dong, Y. (2016)
 \emph{Sufficient dimension reduction via principal lq support vector machine,
- Electronic Journal of Statistics 10: 783–805}.\cr
- Artemiou, A., Dong, Y. and Shin, S. J. (2021)
+Electronic Journal of Statistics 10: 783–805}.\cr
+Artemiou, A., Dong, Y. and Shin, S. J. (2021)
 \emph{Real-time sufficient dimension reduction through principal least
- squares support vector machines, Pattern Recognition 112: 107768}.\cr
- Kim, B. and Shin, S. J. (2019)
+squares support vector machines, Pattern Recognition 112: 107768}.\cr
+Kim, B. and Shin, S. J. (2019)
 \emph{Principal weighted logistic regression for sufficient dimension
 reduction in binary classification, Journal of the Korean Statistical Society 48(2): 194–206}.\cr
- Li, B., Artemiou, A. and Li, L. (2011)
+Li, B., Artemiou, A. and Li, L. (2011)
 \emph{Principal support vector machines for linear and
 nonlinear sufficient dimension reduction, Annals of Statistics 39(6): 3182–3210}.\cr
 Soale, A.-N. and Dong, Y. (2022)
 \emph{On sufficient dimension reduction via principal asymmetric
- least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
- Wang, C., Shin, S. J. and Wu, Y. (2018)
+least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
+Wang, C., Shin, S. J. and Wu, Y. (2018)
 \emph{Principal quantile regression for sufficient dimension
- reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
- Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
+reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
+Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
 \emph{Principal weighted support vector machines for sufficient dimension reduction in
- binary classification, Biometrika 104(1): 67–81}. \cr
- Li, L. (2007)
+binary classification, Biometrika 104(1): 67–81}. \cr
+Li, L. (2007)
 \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 }
 \seealso{

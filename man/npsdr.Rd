@@ -38,7 +38,7 @@ npsdr(
 
 \item{max.iter}{maximum iteration number for the optimization process. default value is 30}
 
-\item{loss}{pre-specified loss functions are "logistic", svm","l2svm","lwpsvm", and user-defined loss function object also can be used formed by inside double quotation mark}
+\item{loss}{pre-specified loss functions are "logistic", "svm","l2svm","wsvm", and user-defined loss function object also can be used formed by inside double quotation mark}
 
 \item{a}{the first hyperparameter for the LUM loss function}
 
@@ -49,7 +49,7 @@ An object with S3 class "npsdr". Details are listed below.
 \item{\code{evectors}}{Eigenvectors of the Mn, the first d leading eigenvectors consists
 the basis of the central subspace}
 \item{\code{evalues}}{Eigenvalues of the Mn}
-\item{\code{obj.psi}}{function \code{phix} result is returned}
+\item{\code{obj.psi}}{result of function \code{get.psi} is returned}
 }
 \description{
 Principal Sufficient Dimension Reduction method
@@ -62,7 +62,7 @@ p <- 5;
 H <- 20;
 lambda <- 0.1
 eps <- 1.0e-5
-max.iter <- 10
+max.iter <- 30
 h <- 1.0e-6; delta <- 5*1.0e-1
 x <- matrix(rnorm(n*p, 0, 2), n, p)
 err <- rnorm(n, 0, .2)
@@ -80,37 +80,38 @@ npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
 data(wisc)
 x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
 y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
-my.obj <- npsdr(x.wisc,y.wisc,H=10,lambda=0.0001,delta=0.1, k=floor(length(y.wisc)/3),
-             eps, max.iter=30,loss="wlogistic")
+set.seed(123)
+my.obj <- npsdr(x.wisc,y.wisc,H=20,lambda=0.01,delta=0.5, k=floor(length(y.wisc)/3),
+               eps, max.iter=30,loss="wlogistic")
 x.nsvm <- phix(x.wisc, my.obj)
 boxplot.default(x.nsvm[y.wisc == 1,1], x.nsvm[y.wisc != 1,1], xlab = "Y", axes = FALSE,
-       ylab = expression(hat(phi)[1](x)))
+               ylab = expression(hat(phi)[1](x)))
 axis(1, seq(0.5, 2.5, by = 0.5), c(NA, "+1", NA, "-1", NA)); axis(2, las = 1)
 }
 }
 \references{
 Artemiou, A. and Dong, Y. (2016)
 \emph{Sufficient dimension reduction via principal lq support vector machine,
- Electronic Journal of Statistics 10: 783–805}.\cr
- Artemiou, A., Dong, Y. and Shin, S. J. (2021)
+Electronic Journal of Statistics 10: 783–805}.\cr
+Artemiou, A., Dong, Y. and Shin, S. J. (2021)
 \emph{Real-time sufficient dimension reduction through principal least
- squares support vector machines, Pattern Recognition 112: 107768}.\cr
- Kim, B. and Shin, S. J. (2019)
+squares support vector machines, Pattern Recognition 112: 107768}.\cr
+Kim, B. and Shin, S. J. (2019)
 \emph{Principal weighted logistic regression for sufficient dimension
 reduction in binary classification, Journal of the Korean Statistical Society 48(2): 194–206}.\cr
- Li, B., Artemiou, A. and Li, L. (2011)
+Li, B., Artemiou, A. and Li, L. (2011)
 \emph{Principal support vector machines for linear and
 nonlinear sufficient dimension reduction, Annals of Statistics 39(6): 3182–3210}.\cr
 Soale, A.-N. and Dong, Y. (2022)
 \emph{On sufficient dimension reduction via principal asymmetric
- least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
- Wang, C., Shin, S. J. and Wu, Y. (2018)
+least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
+Wang, C., Shin, S. J. and Wu, Y. (2018)
 \emph{Principal quantile regression for sufficient dimension
- reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
- Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
+reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
+Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
 \emph{Principal weighted support vector machines for sufficient dimension reduction in
- binary classification, Biometrika 104(1): 67–81}. \cr
- Li, L. (2007)
+binary classification, Biometrika 104(1): 67–81}. \cr
+Li, L. (2007)
 \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 }
 \seealso{

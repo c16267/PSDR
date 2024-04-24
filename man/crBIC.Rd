@@ -31,7 +31,7 @@ x1 <- x \%*\% B[,1]
 x2 <- x \%*\% B[,2]
 fx <-  x1/(0.5 + (x2 + 1)^2)
 y <- fx + err
-obj <- psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
+obj <- psdr(x, y, init.theta, H,lambda, delta, h, eps, max.iter, loss="svm")
 d.hat <- crBIC(obj, rho=0.005); d.hat
 }
 

@@ -1,4 +1,4 @@
-#'Real time sufficient dimension reduction through principal least squares SVM
+#'Real time sufficient dimension reduction through principal least squares regression
 #'@description
 #'In stream data, where we need to constantly update the estimation as new data are collected,
 #'the use of all available data can create computational challenges even for computationally efficient algorithms.
@@ -11,7 +11,7 @@
 #'@param r an estimated parameters from the previous estimation with original data
 #'@param n a number of sample size of the original data
 #'@param Xbar a mean vector from the original data
-#'@param X X in new data
+#'@param x x in new data
 #'@param y y in new data, y is continuous
 #'@param direction A direction of change of the new data which is either "forward" or "backward". default is "forward"
 #'@param H a number of slices. default is set to 10.
@@ -73,13 +73,13 @@
 #'#real time least squares forward
 #'ls <- psdr(x, y, H=10, lambda=0.1, loss="ls")
 #'ls$vectors
-#'rt_ls <- rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, X=x.new, y=y.new,
+#'rt_ls <- rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, x=x.new, y=y.new,
 #'         direction="forward", H, lambda)
 #'rt_ls$vectors
 #'#real time weighted least squares backward
 #'wls <- psdr(x, y.binary, H=10, lambda=0.1, loss="wls")
 #'wls$vectors
-#' rt_wls <- rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, X=x.new, y=y.binary.new,
+#' rt_wls <- rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, x=x.new, y=y.binary.new,
 #'                direction="backward", H, lambda)
 #'rt_wls$vectors
 #'}
@@ -90,7 +90,8 @@
 # Real time Principal (weighted) least squares SDR
 # -----------------------------------------------------------------------------------------------------------
 
-rtpsdr <- function(A, r, n, Xbar, X, y, direction="forward", H=NULL, lambda=NULL){
+rtpsdr <- function(A, r, n, Xbar, x, y, direction="forward", H=NULL, lambda=NULL){
+  X <- x
   p <- ncol(X)
   m <- nrow(X)
 
@@ -108,11 +109,11 @@ rtpsdr <- function(A, r, n, Xbar, X, y, direction="forward", H=NULL, lambda=NULL
       r.new <- matrix(0, ncol=p+1, nrow=length(qprob))
 
       if(is.null(H) == T){
-        warning("H is set to 10 as a default.")
+        writeLines("H is set to 10 as a default.")
         H <- 10
       }
       if(is.null(lambda) == T){
-        warning("lambda is set to 0.1 as a default.")
+        writeLines("lambda is set to 0.1 as a default.")
         lambda <- 0.1
       }
       for (s in 1:length(qprob)){
@@ -134,12 +135,12 @@ rtpsdr <- function(A, r, n, Xbar, X, y, direction="forward", H=NULL, lambda=NULL
       r.new <- matrix(0, ncol=p+1, nrow=H)
 
       if(is.null(H) == T){
-        warning("H is set to 10 as a default.")
+        writeLines("H is set to 10 as a default.")
         H <- 10
       }
 
       if(is.null(lambda) == T){
-        warning("lambda is set to 0.1 as a default.")
+        writeLines("lambda is set to 0.1 as a default.")
         lambda <- 0.1
       }
 
@@ -159,7 +160,8 @@ rtpsdr <- function(A, r, n, Xbar, X, y, direction="forward", H=NULL, lambda=NULL
     eigen.Mn <- eigen(Working_mat)
     newlist <- list("x" = X[ ,-ncol(X)], "y" = y, N=n+m, Xbar=Xbar, r=r.new, A=A.new,
                     "Mn"=Working_mat, "values" = eigen.Mn$values, "vectors" = eigen.Mn$vectors)
-    class(newlist) <- "psdr"
+    class(newlist) <- "rtpsdr"
+    structure(class = "rtpsdr", newlist)
   }
   if(direction == "backward"){ #data remove
     l <- nrow(X)
@@ -175,11 +177,11 @@ rtpsdr <- function(A, r, n, Xbar, X, y, direction="forward", H=NULL, lambda=NULL
       r.new <- matrix(0, ncol=p+1, nrow=length(qprob))
 
       if(is.null(H) == T){
-        warning("H is set to 10 as a default.")
+        writeLines("H is set to 10 as a default.")
         H <- 10
       }
       if(is.null(lambda) == T){
-        warning("lambda is set to 0.1 as a default.")
+        writeLines("lambda is set to 0.1 as a default.")
         lambda <- 0.1
       }
       for (s in 1:length(qprob)){
@@ -201,12 +203,12 @@ rtpsdr <- function(A, r, n, Xbar, X, y, direction="forward", H=NULL, lambda=NULL
       r.new <- matrix(0, ncol=p+1, nrow=H)
 
       if(is.null(H) == T){
-        warning("H is set to 10 as a default.")
+        writeLines("H is set to 10 as a default.")
         H <- 10
       }
 
       if(is.null(lambda) == T){
-        warning("lambda is set to 0.1 as a default.")
+        writeLines("lambda is set to 0.1 as a default.")
         lambda <- 0.1
       }
 
@@ -258,7 +260,7 @@ plot.rtpsdr <- function(x, dim=2, ...) {
   par(mfrow=c(ceiling(sqrt(dim)), ceiling(sqrt(dim))))
   par(mfrow=c(1,dim))
   for(d in 1:dim){
-    plot(obj_psdr[,d], obj$y, type = "p", xlab = bquote(paste(hat(B)[.(d)]^T*X)), ylab  = expression(Y) , cex=.7,...)
+    plot(obj_psdr[,d], obj$y, type = "p", xlab = bquote(paste(hat(b)[.(d)]^T*X)), ylab  = expression(Y) , cex=.7,...)
     graphics::lines(lowess(obj_psdr[,d], obj$y), col="red", lwd=1)
   }
   par(mfrow=c(1,1))

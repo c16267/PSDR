@@ -1,10 +1,9 @@
 #'Predict a response variable for the new explanatory variables
 #'@description
-#'Predict a response after reducing a input data dimension when the response and the input variable have a nonlinear functional relationship.
+#'Returning new \eqn{\mathbf{X}} via the estimated nonlinear kernel.
 #'@param object The object from function \code{npsdr}
-#'@param newdata new data X
+#'@param newdata new data \eqn{\mathbf{X}}
 #'@param d structural dimensionality. d=2 is default.
-#'@param ... additional arguments affecting the predictions produced.
 #'@return the value of the estimated nonlinear mapping \eqn{\phi(\cdot)} is applied to
 #' newdata \eqn{X} with dimension d is returned.
 #' @author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
@@ -34,7 +33,7 @@
 #'@import stats graphics svmpath
 #'@export npsdrx
 
-npsdrx <- function(object, newdata, d = 2, ...){
+npsdrx <- function(object, newdata, d = 2){
   obj <- object
   if (!inherits(obj, "npsdr"))
     stop("use only with \"npsdr\" objects")

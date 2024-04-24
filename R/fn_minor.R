@@ -1,5 +1,6 @@
 #'Pre-embedded arbitrary loss
-
+#' @noRd
+#'
 fn_arbitrary <- function(object){UseMethod("fn_arbitrary")}
 my.logistic <- function(object){UseMethod("my.logistic")}
 my.hinge <- function(object){UseMethod("my.hinge")}
@@ -14,6 +15,7 @@ fn_arbitrary_nonlinear_binary_loss <- function(object){UseMethod("fn_arbitrary_n
 wvec <- function(object){UseMethod("wvec")}
 d2 <- function(object){UseMethod("d2")}
 E <- function(object){UseMethod("E")}
+
 
 # get.psi <- function(object){UseMethod("get.psi")}
 # psi.function <- function(object){UseMethod("psi.function")}

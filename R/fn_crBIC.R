@@ -23,7 +23,7 @@
 #'x2 <- x %*% B[,2]
 #'fx <-  x1/(0.5 + (x2 + 1)^2)
 #'y <- fx + err
-#'obj <- psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
+#'obj <- psdr(x, y, init.theta, H,lambda, delta, h, eps, max.iter, loss="svm")
 #'d.hat <- crBIC(obj, rho=0.005); d.hat
 #'}
 #'
@@ -37,7 +37,7 @@ crBIC <- function(obj, rho){
   n <- nrow(obj$x);
   temp_Mat <- diag(p); temp_Mat[lower.tri(temp_Mat)] <- 1
   temp_vec <- c(1:p)
-  value <- temp_Mat %*% v - temp_vec * (rho * log(n) / n^(1/2) * v[1])
+  value <- as.numeric(temp_Mat %*% v - temp_vec * (rho * log(n) / n^(1/2) * v[1]))
   class(value) <- "Gn"
   structure(class = "Gn", value)
   return(value)

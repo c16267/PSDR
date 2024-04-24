@@ -10,14 +10,14 @@
 #'@param k number of basis functions for a kernel trick, floor(length(y)/3) is default
 #'@param eps threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-4
 #'@param max.iter maximum iteration number for the optimization process. default value is 30
-#'@param loss pre-specified loss functions are "logistic", svm","l2svm","lwpsvm", and user-defined loss function object also can be used formed by inside double quotation mark
+#'@param loss pre-specified loss functions are "logistic", "svm","l2svm","wsvm", and user-defined loss function object also can be used formed by inside double quotation mark
 #'@param a the first hyperparameter for the LUM loss function
 #'@param c second hyperparameter for the LUM loss function
 #' @return An object with S3 class "npsdr". Details are listed below.
 #' \item{\code{evectors}}{Eigenvectors of the Mn, the first d leading eigenvectors consists
 #' the basis of the central subspace}
 #' \item{\code{evalues}}{Eigenvalues of the Mn}
-#' \item{\code{obj.psi}}{function \code{phix} result is returned}
+#' \item{\code{obj.psi}}{result of function \code{get.psi} is returned}
 #' @author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
 #' @references Artemiou, A. and Dong, Y. (2016)
 #' \emph{Sufficient dimension reduction via principal lq support vector machine,
@@ -51,7 +51,7 @@
 #'H <- 20;
 #'lambda <- 0.1
 #'eps <- 1.0e-5
-#'max.iter <- 10
+#'max.iter <- 30
 #'h <- 1.0e-6; delta <- 5*1.0e-1
 #'x <- matrix(rnorm(n*p, 0, 2), n, p)
 #'err <- rnorm(n, 0, .2)
@@ -69,11 +69,12 @@
 #'data(wisc)
 #'x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
 #'y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
-#'my.obj <- npsdr(x.wisc,y.wisc,H=10,lambda=0.0001,delta=0.1, k=floor(length(y.wisc)/3),
-#'              eps, max.iter=30,loss="wlogistic")
+#'set.seed(123)
+#'my.obj <- npsdr(x.wisc,y.wisc,H=20,lambda=0.01,delta=0.5, k=floor(length(y.wisc)/3),
+#'                eps, max.iter=30,loss="wlogistic")
 #'x.nsvm <- phix(x.wisc, my.obj)
 #'boxplot.default(x.nsvm[y.wisc == 1,1], x.nsvm[y.wisc != 1,1], xlab = "Y", axes = FALSE,
-#'        ylab = expression(hat(phi)[1](x)))
+#'                ylab = expression(hat(phi)[1](x)))
 #'axis(1, seq(0.5, 2.5, by = 0.5), c(NA, "+1", NA, "-1", NA)); axis(2, las = 1)
 #'}
 #'@import stats svmpath
@@ -145,7 +146,7 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k=floor(length(
   w.final <- matrix(0, nrow=p, ncol=length(qprob))
   eigen.mat <- diag(1,p,p)
 
-  type.list <- c("svm","logistic","l2svm", "nwpsvm", "LUM", "wlogistic","wl2svm","wLUM","quantile","asymls")
+  type.list <- c("svm","logistic","l2svm", "wsvm", "LUM", "wlogistic","l2wsvm","wLUM","quantile","asymls")
   type.list2 <- c("ls","wls")
 
   if(sum(as.character(loss) == type.list) != 0){
@@ -201,7 +202,7 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k=floor(length(
         w.final[,s] <- w[,s]
       }
     }
-    if(as.character(loss) == "wl2svm"){
+    if(as.character(loss) == "l2wsvm"){
       if(sum(unique(y)) != 0)
         stop("response variable should be a binary type!")
       y.new <- y
@@ -284,7 +285,7 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k=floor(length(
       }
     }
 
-    if(as.character(loss) == "nwpsvm"){
+    if(as.character(loss) == "wsvm"){
       if(sum(unique(y)) != 0)
         stop("response variable should be a binary type!")
       y.new <- y

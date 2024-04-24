@@ -27,7 +27,7 @@ get.psi <- function(x, y, k=floor(length(y)/3)) {
   Psi.new <- eigen.psi$vectors[,1:k, drop = F] # Psi
   l <- eigen.psi$values[1:k]             # eigen
   tmp.obj <- list("w"=Psi.new, "l"=l, "scaled.x"= x, "bw" = bw, "k" = k)
+  tmp.obj
   #class(tmp.obj) <- "npsdr"
-  return(tmp.obj)
 }
 

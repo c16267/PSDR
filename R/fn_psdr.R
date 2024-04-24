@@ -10,7 +10,7 @@
 #' The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method. For example, \code{loss="ls"} means that the user can do SDR with
 #' least square SVM. The package provides several pre-embeded functions. 1. for regression problem: \code{loss="svm"} is the hinge loss, \code{loss="logstic"} is the logistic loss, \code{loss="l2svm"} is the squared hinge loss,
 #' \code{loss="LUM"} is for the large margin unified loss, \code{loss="asymls"} is for asymmetric least square loss
-#' 2. Also the corresponding weighted loss functions are included, such as, \code{loss="lwsvm"} , \code{loss="wlogistic"}, \code{loss="l2wsvm"},
+#' 2. Also the corresponding weighted loss functions are included, such as, \code{loss="wsvm"} , \code{loss="wlogistic"}, \code{loss="l2wsvm"},
 #' \code{loss="wLUM"} and \code{loss="wls"}, which mean weighted hinge loss, weighted logistic loss, weighted squared hinge loss, weighted LUM loss and weighted least square loss, respectively.
 #'
 #' Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
@@ -32,7 +32,7 @@
 #' @param h very small interval for calculating numerical derivatives for a given arbitrary loss function. The default is 1.0e-5
 #' @param eps the threshold for stopping iteration with respect to the magnitude of the change of the derivative. The default value is 1.0e-5
 #' @param max.iter maximum iteration number for the optimization process. default value is 30
-#' @param loss pre-specified loss functions are "logistic", "svm","l2svm","lwsvm", etc. and user-defined loss function object also can be used formed by inside double quotation mark
+#' @param loss pre-specified loss functions are "logistic", "svm","l2svm","wsvm", etc. and user-defined loss function object also can be used formed by inside double quotation mark
 #' @param a the first hyperparameter for the LUM loss function
 #' @param c the second hyperparameter for the LUM loss function
 #' @param stochastic If \code{TRUE} then the stochastic gradient descent algorithm will be implemented to optimize the loss function. The default is FALSE
@@ -76,9 +76,9 @@
 #' H <- 10;
 #' lambda <- 0.1
 #' eps <- 1.0e-5
-#' max.iter <- 10
+#' max.iter <- 30
 #' init.theta <- rnorm(p,0,1)
-#' h <- 1.0e-6; delta <- 5*1.0e-1
+#' h <- 1.0e-5; delta <- 0.5
 #' x <- matrix(rnorm(n*p, 0, 2), n, p)
 #' err <- rnorm(n, 0, .2)
 #' B <- matrix(0, p, 2)
@@ -91,8 +91,8 @@
 #'   rslt <- (1-m)*(as.numeric((1-m) > 0))
 #'   return(rslt)
 #' }
-#' obj <- psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
-#' psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="my.hinge")
+#' obj <- psdr(x, y, init.theta, H, lambda, delta, h, eps, max.iter, loss="svm")
+#' psdr(x, y, init.theta, H,lambda, delta, h, eps, max.iter, loss="my.hinge")
 #' print(obj)
 #' plot(obj)
 #'
@@ -104,7 +104,7 @@
 #' Y <- BostonHousing[,"medv"]
 #' p <- ncol(X); H <- 20; lambda <- 0.1; eps <- 1.0e-5;
 #' max.iter <- 100; h <- 1.0e-5; delta <- 2*1.0e-1;
-#' init.theta <- rnorm(sd=1,n=p)
+#' set.seed(1); init.theta <- rnorm(sd=1,n=p)
 #' rslt <- psdr(X, Y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
 #' value.lsvm <- rslt$values
 #' lsvm <- round(rslt$vectors,3)
@@ -126,7 +126,7 @@
 #' lsvm <- round(wisc.obj$vectors,3)
 #' x.lsvm <- x.wisc %*% lsvm
 #' par(mar=c(5,5,5,5), oma=c(1,1,1,1))
-#' plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = "1st predictor", ylab  = "2nd predictor")
+#' plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = expression(hat(b)[1]^T*X), ylab = expression(hat(b)[2]^T*X))
 #' points(x.lsvm[y.wisc == 1,1], x.lsvm[y.wisc == 1,2], col = 4, pch = "+")
 #' points(x.lsvm[y.wisc != 1,1], x.lsvm[y.wisc != 1,2], col = 2)
 #'@import stats
@@ -142,8 +142,8 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
     if(ncol(as.matrix(y)) != 1)
       stop("y must be a univariate.")
     if(is.null(delta) == T ){
-      stop("Delta is a learning rate which should be specified as a positve value.")
-      #delta <- 0.1
+      writeLines("Delta is a learning rate which should be specified as a positve value. It is set to 0.1")
+      delta <- 0.1
     }
 
     if(is.null(loss)==T){
@@ -158,20 +158,20 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
     }
 
     if(is.null(H) == T){
-      warning("H is set to 10 as a default.")
+      writeLines("H is set to 10 as a default.")
       H <- 10
     }
     if(is.null(h) == T){
-      warning("h is not specifed. It is set to 1.0e-5 as a default.")
+      writeLines("h is not specifed. It is set to 1.0e-5 as a default.")
       h <- 1.0e-5
     }
     if(is.null(max.iter) == T){
-      #warning("max.iter is set to 30 as a default.")
+      writeLines("max.iter is set to 30 as a default.")
       max.iter <- 30
     }
     if(is.null(init) == T){
       init <- rnorm(sd=1,n=p)
-      #warning("initial parameter is generated from N(0,1).")
+      writeLines("initial parameter is generated from N(0,1).")
     }
     if(length(init) != ncol(x))
       stop("a dimension of the initial theta must match that of input x.")
@@ -179,11 +179,11 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
 
 
   if(is.null(lambda) == T){
-    #warning("lambda is set to 0.1 as a default.")
-    lambda <- 0.1
+    writeLines("lambda is set to 1 as a default.")
+    lambda <- 1
   }
-  if (length(y) != nrow(x))     #check lengths
-    stop("The response and predictors have different number of observations.")
+  if (length(y) != nrow(x)){     #check lengths
+    stop("The response and predictors have different number of observations.")}
 
   n <- nrow(x)
   p <- ncol(x)
@@ -210,7 +210,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
   z.new <- t((inv.sd.x %*% centered.x))
   eigen.mat <- diag(1,p,p)
   theta.new <- rep(0,p)
-  type.list <- c("svm","logistic","l2svm", "lwsvm", "LUM", "quantile","asymls", "wlogistic","l2wsvm","wLUM")
+  type.list <- c("svm","logistic","l2svm", "wsvm", "LUM", "quantile","asymls", "wlogistic","l2wsvm","wLUM")
   type.list2 <- c("ls","wls")
 
   if(sum(as.character(loss) == type.list) != 0){
@@ -218,48 +218,28 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
     w.final <- matrix(0, nrow=p, ncol=length(qprob))
 
     if(as.character(loss) == "svm"){
-      if(sum(unique(y)) == 0)
-        stop("response variable should be continuous!")
+      if(sum(unique(y)) == 0){
+        stop("response variable should be continuous!")}
 
       for (s in 1:length(qprob)) {
         y.tilde.new <- rep(1, nrow(x))
         y.tilde.new[y < qy[s]] <- -1  #s
         pos.rate <- sum(y.tilde.new==1)/nrow(z.new)
         neg.rate <- sum(y.tilde.new==-1)/nrow(z.new)
-
-        if(stochastic == TRUE ){
-          for(iter in 1:max.iter){
+        for(iter in 1:max.iter){
+          if(stochastic == TRUE){  ###stratified sampling
             set.seed(iter)
-            m <- nrow(x)
-            mini_batches <- list()
-            rand_sample <- c(sample(m))
-            shuffled_X <- matrix(z.new[rand_sample,], ncol=p)
-            shuffled_Y <- matrix(y.tilde.new[rand_sample], ncol=1)
-
             pos.ind <- sample(which(y.tilde.new==1), ceiling((nrow(z.new)/(log(nrow(z.new))))*pos.rate))
             neg.ind <- sample(which(y.tilde.new==-1), floor((nrow(z.new)/(log(nrow(z.new))))*neg.rate))
             ind <- c(pos.ind,neg.ind)
-            z <- shuffled_X[ind,]
-            y.tilde <- shuffled_Y[ind]
-            n <- nrow(z)
-            w <- w.init
-            for (k in 1:p){
-              margin.v <- z %*% w[,s] * y.tilde #s
-              deriv <- -z[,k]*y.tilde*as.numeric(I((1-margin.v)>0)) #k
-              derivative.j <- lambda*mean(deriv) + 2*w[k,s]  ##k,s
-              theta.new[k] <- w[k,s] -  delta*derivative.j  ##k,k,s
-            }
-            w[,s] <- theta.new
-            w.init <- matrix(theta.new, nrow=p, ncol = length(qprob))
-            if(max(abs(deriv)) < eps)
-              break
-          }
-        }else{
-          for(iter in 1:max.iter){
+            z <- z.new[ind,]
+            y.tilde <- y.tilde.new[ind]
+          }else{
             z <- z.new
             y.tilde <- y.tilde.new
-            n <- nrow(z)
-            w <- w.init
+          }
+          n <- nrow(z)
+          w <- w.init
             for (k in 1:p){
               margin.v <- z %*% w[,s] * y.tilde #s
               deriv <- -z[,k]*y.tilde*as.numeric(I((1-margin.v)>0)) #k
@@ -274,8 +254,6 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
           w.final[,s] <- w[,s]
         }
       }
-    }
-
     if(as.character(loss) == "l2svm"){
       if(sum(unique(y)) == 0)
         stop("response variable should be continuous!")
@@ -423,7 +401,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
       }
     }
 
-    if(as.character(loss) == "lwsvm"){
+    if(as.character(loss) == "wsvm"){
       if(sum(unique(y)) != 0)
         stop("response variable should be a binary type!")
       y.new <- y
@@ -604,17 +582,17 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
     structure(class = "psdr", newlist)
     class(newlist) <- "psdr"
     return(newlist)
-  }
+   }
 
   else if(sum(as.character(loss) == type.list) == 0 & sum(as.character(loss)==type.list2)==0){
-    if(h < 1.0e-3)
-      warning("An infinitesimal interval h should be smaller than 1.0e-3.")
+    if(h > 1.0e-3)
+      writeLines("An infinitesimal interval h should be smaller than 1.0e-3.")
     ft <- E(loss)
     grid.m <- seq(-2,2,length=100)
     if(plot == TRUE){
       plot(grid.m, ft(grid.m,a,c,prob=0.5), type="l", xlab="margin", ylab="loss")
     }
-    message("loss function must be a convex function")
+    writeLines("loss function must be a convex function")
     w.init <- matrix(init, nrow=p, ncol=length(qprob))
     w.final <- matrix(0, nrow=p, ncol=length(qprob))
 
@@ -689,7 +667,6 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
         w.final[,s] <- w[,s]
       }
     }
-
     psi <- t(inv.sd.x) %*% w.final
     Mn <- matrix(0, p, p)
     for (h in 1:length(qprob)) Mn <- Mn + psi[,h, drop = F] %*% t(psi[,h, drop = F])
@@ -700,7 +677,6 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
     structure(class = "psdr", newlist)
     return(newlist)
   }
-
   else if(sum(as.character(loss) == type.list2) != 0){
     #r.H <- matrix(0, ncol=p+1, nrow=H)
     weight_list <- seq(0, 1, length=H+2)[2:(H+1)]
@@ -735,7 +711,6 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
   eigen.Mn <- eigen(Working_mat)
 
   newlist <- list("x" = x, "y" = y, "Mn"=Working_mat, "values" = eigen.Mn$values, "vectors" = eigen.Mn$vectors, "N"=n, "Xbar"=apply(x, 2, mean), "r"=r.H, "A"=A)
-  #newlist <- list("x" = x, "y" = y, "Mn"=Working_mat, "values" = eigen.Mn$values, "vectors" = eigen.Mn$vectors)
   class(newlist) <- "psdr"
   structure(class = "psdr", newlist)
   return(newlist)
@@ -766,7 +741,7 @@ plot.psdr <- function(x, dim=2, ...) {
   par(mfrow=c(ceiling(sqrt(dim)), ceiling(sqrt(dim))))
   par(mfrow=c(1,dim))
   for(d in 1:dim){
-    plot(obj_psdr[,d], obj$y, type = "p", xlab = bquote(paste(hat(B)[.(d)]^T*X)), ylab  = expression(Y) , cex=.7,...)
+    plot(obj_psdr[,d], obj$y, type = "p", xlab = bquote(paste(hat(b)[.(d)]^T*X)), ylab  = expression(Y) , cex=.7,...)
     graphics::lines(lowess(obj_psdr[,d], obj$y), col="red", lwd=1)
   }
   par(mfrow=c(1,1))

@@ -40,7 +40,7 @@ psdr(
 
 \item{max.iter}{maximum iteration number for the optimization process. default value is 30}
 
-\item{loss}{pre-specified loss functions are "logistic", "svm","l2svm","lwsvm", etc. and user-defined loss function object also can be used formed by inside double quotation mark}
+\item{loss}{pre-specified loss functions are "logistic", "svm","l2svm","wsvm", etc. and user-defined loss function object also can be used formed by inside double quotation mark}
 
 \item{a}{the first hyperparameter for the LUM loss function}
 
@@ -70,7 +70,7 @@ Details on \code{loss} option:
 The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method. For example, \code{loss="ls"} means that the user can do SDR with
 least square SVM. The package provides several pre-embeded functions. 1. for regression problem: \code{loss="svm"} is the hinge loss, \code{loss="logstic"} is the logistic loss, \code{loss="l2svm"} is the squared hinge loss,
 \code{loss="LUM"} is for the large margin unified loss, \code{loss="asymls"} is for asymmetric least square loss
-2. Also the corresponding weighted loss functions are included, such as, \code{loss="lwsvm"} , \code{loss="wlogistic"}, \code{loss="l2wsvm"},
+2. Also the corresponding weighted loss functions are included, such as, \code{loss="wsvm"} , \code{loss="wlogistic"}, \code{loss="l2wsvm"},
 \code{loss="wLUM"} and \code{loss="wls"}, which mean weighted hinge loss, weighted logistic loss, weighted squared hinge loss, weighted LUM loss and weighted least square loss, respectively.
 
 Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
@@ -84,16 +84,15 @@ Users can define their own loss function in advance, and apply those functions t
 or \code{loss="myLS"}.
 }
 \examples{
-\donttest{
 set.seed(1)
 n <- 200;
 p <- 5;
 H <- 10;
 lambda <- 0.1
 eps <- 1.0e-5
-max.iter <- 10
+max.iter <- 30
 init.theta <- rnorm(p,0,1)
-h <- 1.0e-6; delta <- 5*1.0e-1
+h <- 1.0e-5; delta <- 0.5
 x <- matrix(rnorm(n*p, 0, 2), n, p)
 err <- rnorm(n, 0, .2)
 B <- matrix(0, p, 2)
@@ -106,8 +105,8 @@ my.hinge <- function(m,...){
   rslt <- (1-m)*(as.numeric((1-m) > 0))
   return(rslt)
 }
-obj <- psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
-psdr(x, y, init.theta, H,lambda, h, delta, eps, max.iter, loss="my.hinge")
+obj <- psdr(x, y, init.theta, H, lambda, delta, h, eps, max.iter, loss="svm")
+psdr(x, y, init.theta, H,lambda, delta, h, eps, max.iter, loss="my.hinge")
 print(obj)
 plot(obj)
 
@@ -119,7 +118,7 @@ X <- BostonHousing[,-12]
 Y <- BostonHousing[,"medv"]
 p <- ncol(X); H <- 20; lambda <- 0.1; eps <- 1.0e-5;
 max.iter <- 100; h <- 1.0e-5; delta <- 2*1.0e-1;
-init.theta <- rnorm(sd=1,n=p)
+set.seed(1); init.theta <- rnorm(sd=1,n=p)
 rslt <- psdr(X, Y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
 value.lsvm <- rslt$values
 lsvm <- round(rslt$vectors,3)
@@ -141,34 +140,33 @@ value.lsvm <- wisc.obj$values
 lsvm <- round(wisc.obj$vectors,3)
 x.lsvm <- x.wisc \%*\% lsvm
 par(mar=c(5,5,5,5), oma=c(1,1,1,1))
-plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = "1st predictor", ylab  = "2nd predictor")
+plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = expression(hat(b)[1]^T*X), ylab = expression(hat(b)[2]^T*X))
 points(x.lsvm[y.wisc == 1,1], x.lsvm[y.wisc == 1,2], col = 4, pch = "+")
 points(x.lsvm[y.wisc != 1,1], x.lsvm[y.wisc != 1,2], col = 2)
-}
 }
 \references{
 Artemiou, A. and Dong, Y. (2016)
 \emph{Sufficient dimension reduction via principal lq support vector machine,
- Electronic Journal of Statistics 10: 783–805}.\cr
- Artemiou, A., Dong, Y. and Shin, S. J. (2021)
+Electronic Journal of Statistics 10: 783–805}.\cr
+Artemiou, A., Dong, Y. and Shin, S. J. (2021)
 \emph{Real-time sufficient dimension reduction through principal least
- squares support vector machines, Pattern Recognition 112: 107768}.\cr
- Kim, B. and Shin, S. J. (2019)
+squares support vector machines, Pattern Recognition 112: 107768}.\cr
+Kim, B. and Shin, S. J. (2019)
 \emph{Principal weighted logistic regression for sufficient dimension
 reduction in binary classification, Journal of the Korean Statistical Society 48(2): 194–206}.\cr
- Li, B., Artemiou, A. and Li, L. (2011)
+Li, B., Artemiou, A. and Li, L. (2011)
 \emph{Principal support vector machines for linear and
 nonlinear sufficient dimension reduction, Annals of Statistics 39(6): 3182–3210}.\cr
 Soale, A.-N. and Dong, Y. (2022)
 \emph{On sufficient dimension reduction via principal asymmetric
- least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
- Wang, C., Shin, S. J. and Wu, Y. (2018)
+least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
+Wang, C., Shin, S. J. and Wu, Y. (2018)
 \emph{Principal quantile regression for sufficient dimension
- reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
- Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
+reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
+Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
 \emph{Principal weighted support vector machines for sufficient dimension reduction in
- binary classification, Biometrika 104(1): 67–81}. \cr
- Li, L. (2007)
+binary classification, Biometrika 104(1): 67–81}. \cr
+Li, L. (2007)
 \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 }
 \seealso{

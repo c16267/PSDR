@@ -4,23 +4,21 @@
 \alias{npsdrx}
 \title{Predict a response variable for the new explanatory variables}
 \usage{
-npsdrx(object, newdata, d = 2, ...)
+npsdrx(object, newdata, d = 2)
 }
 \arguments{
 \item{object}{The object from function \code{npsdr}}
 
-\item{newdata}{new data X}
+\item{newdata}{new data \eqn{\mathbf{X}}}
 
 \item{d}{structural dimensionality. d=2 is default.}
-
-\item{...}{additional arguments affecting the predictions produced.}
 }
 \value{
 the value of the estimated nonlinear mapping \eqn{\phi(\cdot)} is applied to
 newdata \eqn{X} with dimension d is returned.
 }
 \description{
-Predict a response after reducing a input data dimension when the response and the input variable have a nonlinear functional relationship.
+Returning new \eqn{\mathbf{X}} via the estimated nonlinear kernel.
 }
 \examples{
 \donttest{
