@@ -71,13 +71,13 @@
 #'y <- fx + err;                     y.new <- fx.new + err.new
 #'y.binary <- c(sign(fx + err));     y.binary.new <- c(sign(fx.new + err.new))
 #'#real time least squares forward
-#'ls <- psdr(x, y, H=10, lambda=0.1, loss="ls")
+#'ls <- psdr(x, y, H=10, lambda=0.1, loss="lssvm")
 #'ls$vectors
 #'rt_ls <- rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, x=x.new, y=y.new,
 #'         direction="forward", H, lambda)
 #'rt_ls$vectors
 #'#real time weighted least squares backward
-#'wls <- psdr(x, y.binary, H=10, lambda=0.1, loss="wls")
+#'wls <- psdr(x, y.binary, H=10, lambda=0.1, loss="wlssvm")
 #'wls$vectors
 #' rt_wls <- rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, x=x.new, y=y.binary.new,
 #'                direction="backward", H, lambda)
@@ -240,7 +240,6 @@ rtpsdr <- function(A, r, n, Xbar, x, y, direction="forward", H=NULL, lambda=NULL
 #' @export
 print.rtpsdr <- function(x, ...) {
   obj <- x
-  #d <- list(x = obj$x, y = obj$y, Mn= obj$Mn, evalues = obj$values, evectors = obj$vectors, N=obj$n, Xbar=  apply(obj$x, 2, mean), r=obj$r.H, A=obj$A)
   d <- list(Mn= obj$Mn, evalues = obj$values, evectors = obj$vectors, N=obj$n, Xbar=  apply(obj$x, 2, mean), r=obj$r.H, A=obj$A)
   writeLines("realtime psdr result:")
   print(d, ...)
@@ -260,7 +259,7 @@ plot.rtpsdr <- function(x, dim=2, ...) {
   par(mfrow=c(ceiling(sqrt(dim)), ceiling(sqrt(dim))))
   par(mfrow=c(1,dim))
   for(d in 1:dim){
-    plot(obj_psdr[,d], obj$y, type = "p", xlab = bquote(paste(hat(b)[.(d)]^T*X)), ylab  = expression(Y) , cex=.7,...)
+    plot(obj_psdr[,d], obj$y, xlab = bquote(paste(hat(b)[.(d)]^T*X)), ylab  = expression(Y),...)
     graphics::lines(lowess(obj_psdr[,d], obj$y), col="red", lwd=1)
   }
   par(mfrow=c(1,1))

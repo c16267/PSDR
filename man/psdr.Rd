@@ -40,7 +40,7 @@ psdr(
 
 \item{max.iter}{maximum iteration number for the optimization process. default value is 30}
 
-\item{loss}{pre-specified loss functions are "logistic", "svm","l2svm","wsvm", etc. and user-defined loss function object also can be used formed by inside double quotation mark}
+\item{loss}{pre-specified loss functions are "svm", "logit","l2svm","wsvm", and etc., and user-defined loss function object also can be used formed by inside double (or single) quotation mark}
 
 \item{a}{the first hyperparameter for the LUM loss function}
 
@@ -135,12 +135,13 @@ x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
 y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
 init.theta <- rnorm(dim(x.wisc)[2],0,1)
 wisc.obj <- psdr(x.wisc, y.wisc, init.theta, H=20,lambda=0.1, h=1.0e-6,
-                 delta=0.5,eps=10^-4, max.iter=30, loss="wlogistic")
+                 delta=0.5,eps=10^-4, max.iter=30, loss="wlogit")
 value.lsvm <- wisc.obj$values
 lsvm <- round(wisc.obj$vectors,3)
 x.lsvm <- x.wisc \%*\% lsvm
 par(mar=c(5,5,5,5), oma=c(1,1,1,1))
-plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = expression(hat(b)[1]^T*X), ylab = expression(hat(b)[2]^T*X))
+plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = expression(hat(b)[1]^T*X),
+ ylab = expression(hat(b)[2]^T*X))
 points(x.lsvm[y.wisc == 1,1], x.lsvm[y.wisc == 1,2], col = 4, pch = "+")
 points(x.lsvm[y.wisc != 1,1], x.lsvm[y.wisc != 1,2], col = 2)
 }

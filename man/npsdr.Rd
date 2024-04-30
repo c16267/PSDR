@@ -38,7 +38,7 @@ npsdr(
 
 \item{max.iter}{maximum iteration number for the optimization process. default value is 30}
 
-\item{loss}{pre-specified loss functions are "logistic", "svm","l2svm","wsvm", and user-defined loss function object also can be used formed by inside double quotation mark}
+\item{loss}{pre-specified loss functions are "svm", "logit","l2svm","wsvm", and etc., and user-defined loss function object also can be used formed by inside double (or single) quotation mark}
 
 \item{a}{the first hyperparameter for the LUM loss function}
 
@@ -82,7 +82,7 @@ x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
 y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
 set.seed(123)
 my.obj <- npsdr(x.wisc,y.wisc,H=20,lambda=0.01,delta=0.5, k=floor(length(y.wisc)/3),
-               eps, max.iter=30,loss="wlogistic")
+               eps, max.iter=30,loss="wlogit")
 x.nsvm <- phix(x.wisc, my.obj)
 boxplot.default(x.nsvm[y.wisc == 1,1], x.nsvm[y.wisc != 1,1], xlab = "Y", axes = FALSE,
                ylab = expression(hat(phi)[1](x)))

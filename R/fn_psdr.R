@@ -32,7 +32,7 @@
 #' @param h very small interval for calculating numerical derivatives for a given arbitrary loss function. The default is 1.0e-5
 #' @param eps the threshold for stopping iteration with respect to the magnitude of the change of the derivative. The default value is 1.0e-5
 #' @param max.iter maximum iteration number for the optimization process. default value is 30
-#' @param loss pre-specified loss functions are "logistic", "svm","l2svm","wsvm", etc. and user-defined loss function object also can be used formed by inside double quotation mark
+#' @param loss pre-specified loss functions are "svm", "logit","l2svm","wsvm", and etc., and user-defined loss function object also can be used formed by inside double (or single) quotation mark
 #' @param a the first hyperparameter for the LUM loss function
 #' @param c the second hyperparameter for the LUM loss function
 #' @param stochastic If \code{TRUE} then the stochastic gradient descent algorithm will be implemented to optimize the loss function. The default is FALSE
@@ -121,12 +121,13 @@
 #' y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
 #' init.theta <- rnorm(dim(x.wisc)[2],0,1)
 #' wisc.obj <- psdr(x.wisc, y.wisc, init.theta, H=20,lambda=0.1, h=1.0e-6,
-#'                  delta=0.5,eps=10^-4, max.iter=30, loss="wlogistic")
+#'                  delta=0.5,eps=10^-4, max.iter=30, loss="wlogit")
 #' value.lsvm <- wisc.obj$values
 #' lsvm <- round(wisc.obj$vectors,3)
 #' x.lsvm <- x.wisc %*% lsvm
 #' par(mar=c(5,5,5,5), oma=c(1,1,1,1))
-#' plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = expression(hat(b)[1]^T*X), ylab = expression(hat(b)[2]^T*X))
+#' plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = expression(hat(b)[1]^T*X),
+#'  ylab = expression(hat(b)[2]^T*X))
 #' points(x.lsvm[y.wisc == 1,1], x.lsvm[y.wisc == 1,2], col = 4, pch = "+")
 #' points(x.lsvm[y.wisc != 1,1], x.lsvm[y.wisc != 1,2], col = 2)
 #'@import stats
@@ -136,7 +137,7 @@
 
 psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps=1.0e-5, max.iter=NULL,
                  loss=NULL, a=NULL, c=NULL, stochastic=FALSE, plot=FALSE) {
-  if(sum(as.character(loss) == c("ls", "wls")) == 0){
+  if(sum(as.character(loss) == c("lssvm", "wlssvm")) == 0){
     if(!is.matrix(x) & !is.data.frame(x))
       stop("x must be a matrix or dataframe.")
     if(ncol(as.matrix(y)) != 1)
@@ -151,7 +152,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
       #loss <- 'svm'
     }
 
-    if(as.character(loss) == "LUM" ){
+    if(as.character(loss) == "lum" ){
       if(is.null(a) == T)
         warning("A LUM loss fucntion needs both hyperparameter a and c.")
       #a <- 1; c<- 10^8
@@ -183,7 +184,8 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
     lambda <- 1
   }
   if (length(y) != nrow(x)){     #check lengths
-    stop("The response and predictors have different number of observations.")}
+    stop("The response and predictors have different number of observations.")
+  }
 
   n <- nrow(x)
   p <- ncol(x)
@@ -210,8 +212,8 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
   z.new <- t((inv.sd.x %*% centered.x))
   eigen.mat <- diag(1,p,p)
   theta.new <- rep(0,p)
-  type.list <- c("svm","logistic","l2svm", "wsvm", "LUM", "quantile","asymls", "wlogistic","l2wsvm","wLUM")
-  type.list2 <- c("ls","wls")
+  type.list <- c("svm","logit","l2svm", "wsvm", "lum", "qr","asls", "wlogit","wl2svm","wlum")
+  type.list2 <- c("lssvm","wlssvm")
 
   if(sum(as.character(loss) == type.list) != 0){
     w.init <- matrix(init, nrow=p, ncol=length(qprob))
@@ -290,7 +292,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
         w.final[,s] <- w[,s]
       }
     }
-    if(as.character(loss) == "l2wsvm"){
+    if(as.character(loss) == "wl2svm"){
       if(sum(unique(y)) != 0)
         stop("response variable should be a binary type!")
       y.new <- y
@@ -327,7 +329,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
       }
     }
 
-    if(as.character(loss) == "logistic"){
+    if(as.character(loss) == "logit"){
       if(sum(unique(y)) == 0)
         stop("response variable should be continuous!")
       for (s in 1:length(qprob)) {
@@ -364,7 +366,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
       }
     }
 
-    if(as.character(loss) == "wlogistic"){
+    if(as.character(loss) == "wlogit"){
       for (s in 1:length(qprob)){
         if(sum(unique(y)) != 0)
           stop("response variable should be a binary type!")
@@ -438,7 +440,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
       }
     }
 
-    if(as.character(loss) == "LUM"){
+    if(as.character(loss) == "lum"){
       if(sum(unique(y)) == 0)
         stop("response variable should be continuous!")
       for (s in 1:length(qprob)) {
@@ -477,7 +479,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
         w.final[,s] <- w[,s]
       }
     }
-    if(as.character(loss) == "wLUM"){
+    if(as.character(loss) == "wlum"){
       if(sum(unique(y)) != 0)
         stop("response variable should be a binary type!")
       y.new <- y
@@ -515,7 +517,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
         w.final[,s] <- w[,s]
       }
     }
-    if(as.character(loss) == "quantile"){
+    if(as.character(loss) == "qr"){
       #if(sum(unique(y)) == 0)
       #  stop("response variable should be continuous!")
       for (s in 1:length(pi.grid)) {
@@ -533,20 +535,16 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
           w <- w.init
           for (k in 1:p){
             u <- y.new - z%*%w[,s]   #s
-            #derivative.j <- 2*w[k,s]+lambda*sum((-z[,k]*pi.grid[s])*as.numeric(I(u>0))+(z[,k]*(1-pi.grid[s]))*as.numeric(I(u<0)))*(1/length(y.new)) #k,s,k,s,k,s
             derivative.j <- 2*w[k,s]+lambda*(1/length(y))*sum(-z[,k]*{pi.grid[s]*as.numeric(I(u>0))+(1-pi.grid[s])*as.numeric(I(u<=0))})
             theta.new[k] <- w[k,s] -  delta*derivative.j  ##k,k,s
-            #if(derivative.j < eps)
-            #  break
           }
-          #print(derivative.j)
           w[,s] <- theta.new  #s
           w.init <- matrix(theta.new, nrow=p, ncol = length(pi.grid))
         }
         w.final[,s] <- w[,s] #s,s
       }
     }
-    if(as.character(loss) == "asymls"){
+    if(as.character(loss) == "asls"){
       # if(sum(unique(y)) == 0)
       #   stop("response variable should be continuous!")
       for (s in 1:length(pi.grid)) {
@@ -680,7 +678,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
   else if(sum(as.character(loss) == type.list2) != 0){
     #r.H <- matrix(0, ncol=p+1, nrow=H)
     weight_list <- seq(0, 1, length=H+2)[2:(H+1)]
-    if(as.character(loss) == "ls"){
+    if(as.character(loss) == "lssvm"){
       A <- vector(mode = "list", length = length(qprob))
       if(sum(unique(y)) == 0)
         stop("response variable should be continuous!")
@@ -694,7 +692,7 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
         r.H[s,] <- M %*% C
       }
     }
-    if(as.character(loss)=="wls"){
+    if(as.character(loss)=="wlssvm"){
       A <- vector(mode = "list", length = H)
       r.H <- matrix(0, ncol=p+1, nrow=H)
       if(sum(unique(y)) != 0)
@@ -721,7 +719,6 @@ psdr <- function(x, y, init=NULL, H=NULL, lambda=NULL, delta=NULL, h=1.0e-5, eps
 #' @export
 print.psdr <- function(x, ...) {
   obj <- x
-  #d <- list(x = obj$x, y = obj$y, Mn= obj$Mn, evalues = obj$values, evectors = obj$vectors)
   d <- list(Mn= obj$Mn, evalues = obj$values, evectors = obj$vectors)
   writeLines("psdr result:")
   print(d, ...)
@@ -741,7 +738,7 @@ plot.psdr <- function(x, dim=2, ...) {
   par(mfrow=c(ceiling(sqrt(dim)), ceiling(sqrt(dim))))
   par(mfrow=c(1,dim))
   for(d in 1:dim){
-    plot(obj_psdr[,d], obj$y, type = "p", xlab = bquote(paste(hat(b)[.(d)]^T*X)), ylab  = expression(Y) , cex=.7,...)
+    plot(obj_psdr[,d], obj$y, xlab = bquote(paste(hat(b)[.(d)]^T*X)), ylab  = expression(Y) ,...)
     graphics::lines(lowess(obj_psdr[,d], obj$y), col="red", lwd=1)
   }
   par(mfrow=c(1,1))

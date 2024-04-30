@@ -66,13 +66,13 @@ fx.new <-  x1.new/(0.5 + (x2.new + 1)^2)
 y <- fx + err;                     y.new <- fx.new + err.new
 y.binary <- c(sign(fx + err));     y.binary.new <- c(sign(fx.new + err.new))
 #real time least squares forward
-ls <- psdr(x, y, H=10, lambda=0.1, loss="ls")
+ls <- psdr(x, y, H=10, lambda=0.1, loss="lssvm")
 ls$vectors
 rt_ls <- rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, x=x.new, y=y.new,
         direction="forward", H, lambda)
 rt_ls$vectors
 #real time weighted least squares backward
-wls <- psdr(x, y.binary, H=10, lambda=0.1, loss="wls")
+wls <- psdr(x, y.binary, H=10, lambda=0.1, loss="wlssvm")
 wls$vectors
 rt_wls <- rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, x=x.new, y=y.binary.new,
                direction="backward", H, lambda)
