@@ -130,9 +130,7 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k=floor(length(
   Psi.new <- psi.gen$w   #n*k
   n <- nrow(Psi.new)
   p <- ncol(Psi.new)
-  bar.x <- apply(Psi.new, 2, mean)
-  x.star <- cbind(t(t(Psi.new)-bar.x), -1)
-  cov.x.star <- cov(x.star)
+
   init.theta <- rnorm(sd=1,n=p)
   step <- 1/H
   pi.grid <- seq(step, 1-step, by = step)
@@ -503,6 +501,9 @@ npsdr <- function(x, y, H=NULL, h=NULL, lambda=NULL, delta=NULL, k=floor(length(
   else if(sum(as.character(loss) == type.list2) != 0){
     r.H <- matrix(0, ncol=p+1, nrow=H)
     weight_list <- seq(0, 1, length=H+2)[2:(H+1)]
+    bar.x <- apply(Psi.new, 2, mean)
+    x.star <- cbind(t(t(Psi.new)-bar.x), -1)
+    cov.x.star <- cov(x.star)
     if(as.character(loss) == "lssvm"){
       if(sum(unique(y)) == 0)
         stop("response variable should be continuous!")

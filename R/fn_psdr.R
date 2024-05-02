@@ -7,12 +7,12 @@
 #'
 #' Details on \code{loss} option:
 #'
-#' The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method. For example, \code{loss="ls"} means that the user can do SDR with
-#' least square SVM. The package provides several pre-embeded functions. 1. for regression problem: \code{loss="svm"} is the hinge loss, \code{loss="logstic"} is the logistic loss, \code{loss="l2svm"} is the squared hinge loss,
-#' \code{loss="LUM"} is for the large margin unified loss, \code{loss="asymls"} is for asymmetric least square loss
-#' 2. Also the corresponding weighted loss functions are included, such as, \code{loss="wsvm"} , \code{loss="wlogistic"}, \code{loss="l2wsvm"},
-#' \code{loss="wLUM"} and \code{loss="wls"}, which mean weighted hinge loss, weighted logistic loss, weighted squared hinge loss, weighted LUM loss and weighted least square loss, respectively.
-#'
+#' The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method. For example, \code{loss="lssvm"} means that the user can do SDR with
+#' least square SVM. The package provides several pre-embeded loss functions. 1. for regression problem: \code{loss="svm"} uses hinge loss, \code{loss="logit"} is for logistic loss, \code{loss="l2svm"} is the squared hinge loss,
+#' \code{loss="lum"} is for the large margin unified loss, \code{loss="asls"} is for asymmetric least square loss
+#' 2. Also the corresponding weighted loss functions are included, such as, \code{loss="wsvm"} , \code{loss="wlogit"}, \code{loss="wl2svm"},
+#' \code{loss="wlum"} and \code{loss="wlssvm"}, which mean weighted hinge loss, weighted logistic loss, weighted squared hinge loss, weighted LUM loss and weighted least square loss, respectively.
+#' Entire list of loss functions is found at the \url{https://CRAN.R-project.org/package=psvmSDR}.
 #' Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
 #' Two examples of the usage of user-defined losses are presented below (\code{m} represents a margin):
 #'

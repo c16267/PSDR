@@ -92,26 +92,26 @@ axis(1, seq(0.5, 2.5, by = 0.5), c(NA, "+1", NA, "-1", NA)); axis(2, las = 1)
 \references{
 Artemiou, A. and Dong, Y. (2016)
 \emph{Sufficient dimension reduction via principal lq support vector machine,
-Electronic Journal of Statistics 10: 783–805}.\cr
-Artemiou, A., Dong, Y. and Shin, S. J. (2021)
+ Electronic Journal of Statistics 10: 783–805}.\cr
+ Artemiou, A., Dong, Y. and Shin, S. J. (2021)
 \emph{Real-time sufficient dimension reduction through principal least
-squares support vector machines, Pattern Recognition 112: 107768}.\cr
-Kim, B. and Shin, S. J. (2019)
+ squares support vector machines, Pattern Recognition 112: 107768}.\cr
+ Kim, B. and Shin, S. J. (2019)
 \emph{Principal weighted logistic regression for sufficient dimension
 reduction in binary classification, Journal of the Korean Statistical Society 48(2): 194–206}.\cr
-Li, B., Artemiou, A. and Li, L. (2011)
+ Li, B., Artemiou, A. and Li, L. (2011)
 \emph{Principal support vector machines for linear and
 nonlinear sufficient dimension reduction, Annals of Statistics 39(6): 3182–3210}.\cr
 Soale, A.-N. and Dong, Y. (2022)
 \emph{On sufficient dimension reduction via principal asymmetric
-least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
-Wang, C., Shin, S. J. and Wu, Y. (2018)
+ least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
+ Wang, C., Shin, S. J. and Wu, Y. (2018)
 \emph{Principal quantile regression for sufficient dimension
-reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
-Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
+ reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
+ Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
 \emph{Principal weighted support vector machines for sufficient dimension reduction in
-binary classification, Biometrika 104(1): 67–81}. \cr
-Li, L. (2007)
+ binary classification, Biometrika 104(1): 67–81}. \cr
+ Li, L. (2007)
 \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 }
 \seealso{

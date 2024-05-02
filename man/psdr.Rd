@@ -67,12 +67,12 @@ Also, it provides a realtime sufficient dimension reduction update procedure usi
 \details{
 Details on \code{loss} option:
 
-The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method. For example, \code{loss="ls"} means that the user can do SDR with
-least square SVM. The package provides several pre-embeded functions. 1. for regression problem: \code{loss="svm"} is the hinge loss, \code{loss="logstic"} is the logistic loss, \code{loss="l2svm"} is the squared hinge loss,
-\code{loss="LUM"} is for the large margin unified loss, \code{loss="asymls"} is for asymmetric least square loss
-2. Also the corresponding weighted loss functions are included, such as, \code{loss="wsvm"} , \code{loss="wlogistic"}, \code{loss="l2wsvm"},
-\code{loss="wLUM"} and \code{loss="wls"}, which mean weighted hinge loss, weighted logistic loss, weighted squared hinge loss, weighted LUM loss and weighted least square loss, respectively.
-
+The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method. For example, \code{loss="lssvm"} means that the user can do SDR with
+least square SVM. The package provides several pre-embeded loss functions. 1. for regression problem: \code{loss="svm"} uses hinge loss, \code{loss="logit"} is for logistic loss, \code{loss="l2svm"} is the squared hinge loss,
+\code{loss="lum"} is for the large margin unified loss, \code{loss="asls"} is for asymmetric least square loss
+2. Also the corresponding weighted loss functions are included, such as, \code{loss="wsvm"} , \code{loss="wlogit"}, \code{loss="wl2svm"},
+\code{loss="wlum"} and \code{loss="wlssvm"}, which mean weighted hinge loss, weighted logistic loss, weighted squared hinge loss, weighted LUM loss and weighted least square loss, respectively.
+Entire list of loss functions is found at the \url{https://CRAN.R-project.org/package=psvmSDR}.
 Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
 Two examples of the usage of user-defined losses are presented below (\code{m} represents a margin):
 
@@ -148,26 +148,26 @@ points(x.lsvm[y.wisc != 1,1], x.lsvm[y.wisc != 1,2], col = 2)
 \references{
 Artemiou, A. and Dong, Y. (2016)
 \emph{Sufficient dimension reduction via principal lq support vector machine,
-Electronic Journal of Statistics 10: 783–805}.\cr
-Artemiou, A., Dong, Y. and Shin, S. J. (2021)
+ Electronic Journal of Statistics 10: 783–805}.\cr
+ Artemiou, A., Dong, Y. and Shin, S. J. (2021)
 \emph{Real-time sufficient dimension reduction through principal least
-squares support vector machines, Pattern Recognition 112: 107768}.\cr
-Kim, B. and Shin, S. J. (2019)
+ squares support vector machines, Pattern Recognition 112: 107768}.\cr
+ Kim, B. and Shin, S. J. (2019)
 \emph{Principal weighted logistic regression for sufficient dimension
 reduction in binary classification, Journal of the Korean Statistical Society 48(2): 194–206}.\cr
-Li, B., Artemiou, A. and Li, L. (2011)
+ Li, B., Artemiou, A. and Li, L. (2011)
 \emph{Principal support vector machines for linear and
 nonlinear sufficient dimension reduction, Annals of Statistics 39(6): 3182–3210}.\cr
 Soale, A.-N. and Dong, Y. (2022)
 \emph{On sufficient dimension reduction via principal asymmetric
-least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
-Wang, C., Shin, S. J. and Wu, Y. (2018)
+ least squares, Journal of Nonparametric Statistics 34(1): 77–94}.\cr
+ Wang, C., Shin, S. J. and Wu, Y. (2018)
 \emph{Principal quantile regression for sufficient dimension
-reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
-Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
+ reduction with heteroscedasticity, Electronic Journal of Statistics 12(2): 2114–2140}.\cr
+ Shin, S. J., Wu, Y., Zhang, H. H. and Liu, Y. (2017)
 \emph{Principal weighted support vector machines for sufficient dimension reduction in
-binary classification, Biometrika 104(1): 67–81}. \cr
-Li, L. (2007)
+ binary classification, Biometrika 104(1): 67–81}. \cr
+ Li, L. (2007)
 \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 }
 \seealso{

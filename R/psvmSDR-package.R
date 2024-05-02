@@ -1,6 +1,6 @@
 #' A unified package for a principal sufficient dimension reduction method
 #'
-#' Principal Sufficient Dimension Reduction method
+#' Principal Sufficient Dimension Reduction methodS
 #'
 #' This package estimates the basis of the central subspace for both regression and classification problem
 #' with underlying a linear and nonlinear relationship between predictors and response assumptions.
@@ -8,14 +8,14 @@
 #' It covers from linear, nonlinear to realtime dimension reduction cases.
 #' A variety of methods can be made from specifying the functions arguments.
 #'
-#' \tabular{ll}{ Package: \tab upsdr\cr Type: \tab Package\cr Version: \tab
+#' \tabular{ll}{ Package: \tab psvmSDR\cr Type: \tab Package\cr Version: \tab
 #' 1.0.0\cr Date: \tab 2024-05-01\cr License: \tab GPL-2 \cr }
 #' Very simple to use. Accepts \code{x,y} data for regression (or classification) models, and
 #' produces the basis of the central subspace, which has a lower rank to the original data matrix.
-#' Only 3 functions: \code{psdr}\cr
-#' \code{print.psdr}\cr \code{plot.psdr}
+#' The main 3 functions are: \code{psdr} for a linear PSDR, \cr
+#' \code{npsdr} is for a nonlinear PSDR \cr \code{rtpsdr} for a realtime principal least square SVM;
 #'
-#' @name upsdr-package
+#' @name psvmSDR-package
 #' @docType package
 #' @author Jungmin Shin, Andreas Artemiou, Seung Jun Shin \cr Maintainer:
 #' Jungmin Shin \email{jungminshin@korea.ac.kr}
@@ -44,5 +44,5 @@
 #' \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 #'
 #' @import graphics svmpath
-#' @aliases upsdr-package
+#' @aliases psvmSDR-package
 #' @srrVerbose FALSE
