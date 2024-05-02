@@ -1,6 +1,6 @@
-#'Predict a response variable for the new explanatory variables
+#'Reconstruct the estimated sufficient predictors for a given \eqn{\mathbf{x}}
 #'@description
-#'Returning new \eqn{\mathbf{X}} via the estimated nonlinear kernel.
+#'Returning the estimated sufficient predictors \eqn{\hat{\phi(\mathbf{x})}} for a given \eqn{\mathbf{x}}
 #'@param object The object from function \code{npsdr}
 #'@param newdata new data \eqn{\mathbf{X}}
 #'@param d structural dimensionality. d=2 is default.
