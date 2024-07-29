@@ -7,16 +7,14 @@
 npsdr(
   x,
   y,
-  H = NULL,
-  h = NULL,
-  lambda = NULL,
-  delta = NULL,
-  k = floor(length(y)/3),
-  eps = 1e-04,
-  max.iter = NULL,
-  loss = NULL,
-  a = NULL,
-  c = NULL
+  loss = "svm",
+  h = 10,
+  lambda = 1,
+  b = floor(length(y)/3),
+  eps = 1e-05,
+  max.iter = 100,
+  eta = 0.1,
+  plot = TRUE
 )
 }
 \arguments{
@@ -24,32 +22,28 @@ npsdr(
 
 \item{y}{either continuous or (+1,-1) typed binary response vector}
 
-\item{H}{the number of slices. default value is 10}
+\item{loss}{pre-specified loss functions are "svm", "logit","l2svm","wsvm", and etc., and user-defined loss function object also can be used formed by inside double (or single) quotation mark}
 
-\item{h}{very small interval for calculating numerical derivatives for a given arbitrary loss function}
+\item{h}{the number of slices. default value is 10}
 
-\item{lambda}{hyperparameter for the loss function. default value is 0.1}
+\item{lambda}{hyperparameter for the loss function. default value is 1}
 
-\item{delta}{learning rate for gradient descent method. default value is 0.1}
-
-\item{k}{number of basis functions for a kernel trick, floor(length(y)/3) is default}
+\item{b}{number of basis functions for a kernel trick, floor(length(y)/3) is default}
 
 \item{eps}{threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-4}
 
 \item{max.iter}{maximum iteration number for the optimization process. default value is 30}
 
-\item{loss}{pre-specified loss functions are "svm", "logit","l2svm","wsvm", and etc., and user-defined loss function object also can be used formed by inside double (or single) quotation mark}
+\item{eta}{learning rate for gradient descent method. default value is 0.1}
 
-\item{a}{the first hyperparameter for the LUM loss function}
-
-\item{c}{second hyperparameter for the LUM loss function}
+\item{plot}{If \code{TRUE} then it produces scatter plots of \eqn{Y} versus the first sufficient predictor. The default is FALSE.}
 }
 \value{
 An object with S3 class "npsdr". Details are listed below.
-\item{\code{evectors}}{Eigenvectors of the Mn, the first d leading eigenvectors consists
-the basis of the central subspace}
-\item{\code{evalues}}{Eigenvalues of the Mn}
-\item{\code{obj.psi}}{result of function \code{get.psi} is returned}
+\item{\code{evalues}}{Eigenvalues of the estimated working matrix M.}
+\item{\code{evectors}}{Eigenvectors of the estimated working matrix M, the first d leading eigenvectors consists
+the basis of the central subspace.}
+\item{\code{obj.psi}}{result of function \code{get.psi} is returned. It will not be printed out, unless called manually.}
 }
 \description{
 Principal Sufficient Dimension Reduction method
@@ -59,34 +53,11 @@ Principal Sufficient Dimension Reduction method
 set.seed(1)
 n <- 200;
 p <- 5;
-H <- 20;
-lambda <- 0.1
-eps <- 1.0e-5
-max.iter <- 30
-h <- 1.0e-6; delta <- 5*1.0e-1
 x <- matrix(rnorm(n*p, 0, 2), n, p)
-err <- rnorm(n, 0, .2)
-B <- matrix(0, p, 2)
-B[1,1] <- 1; B[2,2] <- 1
-x1 <- x \%*\% B[,1]
-x2 <- x \%*\% B[,2]
-fx <-  x1/(0.5 + (x2 + 1)^2)
-y <- c(fx + err) # response
-y.binary <- sign(y)
-npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps,
-               max.iter, loss="svm")
-
-##real data: Wisconsin diagnostic breast cancer data
-data(wisc)
-x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
-y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
-set.seed(123)
-my.obj <- npsdr(x.wisc,y.wisc,H=20,lambda=0.01,delta=0.5, k=floor(length(y.wisc)/3),
-               eps, max.iter=30,loss="wlogit")
-x.nsvm <- phix(x.wisc, my.obj)
-boxplot.default(x.nsvm[y.wisc == 1,1], x.nsvm[y.wisc != 1,1], xlab = "Y", axes = FALSE,
-               ylab = expression(hat(phi)[1](x)))
-axis(1, seq(0.5, 2.5, by = 0.5), c(NA, "+1", NA, "-1", NA)); axis(2, las = 1)
+y <-  x[,1]/(0.5 + (x[,2] + 1)^2) + 0.2*rnorm(n)
+obj_kernel <- npsdr(x, y, plot=FALSE)
+print(obj_kernel)
+plot(obj_kernel)
 }
 }
 \references{
@@ -115,8 +86,8 @@ Soale, A.-N. and Dong, Y. (2022)
 \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 }
 \seealso{
-\code{\link{npsdrx}}, \code{\link{phix}}, \code{\link{get.psi}}, \code{\link{print}}
+\code{\link{npsdr_x}}, \code{\link{psdr}}, \code{\link{rtpsdr}}
 }
 \author{
-Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}
 }

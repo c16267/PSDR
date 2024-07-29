@@ -4,26 +4,18 @@
 \alias{rtpsdr}
 \title{Real time sufficient dimension reduction through principal least squares regression}
 \usage{
-rtpsdr(A, r, n, Xbar, x, y, direction = "forward", H = NULL, lambda = NULL)
+rtpsdr(x, y, obj = NULL, h = 10, lambda = 1)
 }
 \arguments{
-\item{A}{a temporal matrix produced by the previous estimation with original data}
-
-\item{r}{an estimated parameters from the previous estimation with original data}
-
-\item{n}{a number of sample size of the original data}
-
-\item{Xbar}{a mean vector from the original data}
-
 \item{x}{x in new data}
 
 \item{y}{y in new data, y is continuous}
 
-\item{direction}{A direction of change of the new data which is either "forward" or "backward". default is "forward"}
+\item{obj}{the latest output object from the \code{rtpsdr}}
 
-\item{H}{a number of slices. default is set to 10.}
+\item{h}{a number of slices. default is set to 10.}
 
-\item{lambda}{hyperparameter for the loss function. default is set to 0.1.}
+\item{lambda}{hyperparameter for the loss function. default is set to 1.}
 }
 \value{
 An object with S3 class "rtpsdr". Details are listed below.
@@ -50,33 +42,17 @@ It is efficient algorithms for either adding new data or removing old data are p
 }
 \examples{
 \donttest{
-set.seed(1234)
-n <- 500; n2 <- 300; p <- 5; H <- 10; lambda <- 0.1;
-x <- matrix(rnorm(n*p, 0, 1), n, p)
-x.new <- matrix(rnorm(n2*p, 0, 1), n2, p)
-err <- rnorm(n, 0, .2); err.new <- rnorm(n2, 0, .2)
-B <- matrix(0, p, 2)
-B[1,1] <- 1; B[2,2] <- 1
-x1 <- x \%*\% B[,1]
-x2 <- x \%*\% B[,2]
-x1.new <- x.new \%*\% B[,1]
-x2.new <- x.new \%*\% B[,2]
-fx <-  x1/(0.5 + (x2 + 1)^2)
-fx.new <-  x1.new/(0.5 + (x2.new + 1)^2)
-y <- fx + err;                     y.new <- fx.new + err.new
-y.binary <- c(sign(fx + err));     y.binary.new <- c(sign(fx.new + err.new))
-#real time least squares forward
-ls <- psdr(x, y, H=10, lambda=0.1, loss="lssvm")
-ls$vectors
-rt_ls <- rtpsdr(A=ls$A, r=ls$r, n=ls$N, Xbar=ls$Xbar, x=x.new, y=y.new,
-        direction="forward", H, lambda)
-rt_ls$vectors
-#real time weighted least squares backward
-wls <- psdr(x, y.binary, H=10, lambda=0.1, loss="wlssvm")
-wls$vectors
-rt_wls <- rtpsdr(A=wls$A, r=wls$r, n=wls$N, Xbar=wls$Xbar, x=x.new, y=y.binary.new,
-               direction="backward", H, lambda)
-rt_wls$vectors
+p <- 5
+m <- 500 # batch size
+N <- 10  # number of batches
+obj <- NULL
+for (iter in 1:N){
+ set.seed(iter)
+ x <- matrix(rnorm(m*p), m, p)
+ y <-  x[,1]/(0.5 + (x[,2] + 1)^2) + 0.2 * rnorm(m)
+ obj <- rtpsdr(x = x, y = y, obj=obj)
+}
+print(obj)
 }
 }
 \references{
@@ -105,8 +81,8 @@ Soale, A.-N. and Dong, Y. (2022)
 \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 }
 \seealso{
-\code{\link{psdr}} \code{\link{npsdr}}
+\code{\link{psdr}}, \code{\link{npsdr}}
 }
 \author{
-Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}
 }

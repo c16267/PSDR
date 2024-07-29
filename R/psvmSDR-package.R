@@ -1,23 +1,22 @@
 #' A unified package for a principal sufficient dimension reduction method
 #'
-#' Principal Sufficient Dimension Reduction methodS
+#' Principal Sufficient Dimension Reduction methods
 #'
-#' This package estimates the basis of the central subspace for both regression and classification problem
-#' with underlying a linear and nonlinear relationship between predictors and response assumptions.
-#' This package implements a various principal sufficient dimension reduction methods in a unified code.
-#' It covers from linear, nonlinear to realtime dimension reduction cases.
-#' A variety of methods can be made from specifying the functions arguments.
+#' This package estimates the basis of the central subspace for both regression and classification problems
+#' with underlying assumption of linear or nonlinear relationship between predictors and response variable.
+#' This package implements a various principal sufficient dimension reduction methods (often called 'Principal Machines (PM)') in a unified fashion.
+#' It ranges from linear, nonlinear dimension reduction to real-time cases where the data is collected sequentially.
 #'
 #' \tabular{ll}{ Package: \tab psvmSDR\cr Type: \tab Package\cr Version: \tab
 #' 1.0.0\cr Date: \tab 2024-05-01\cr License: \tab GPL-2 \cr }
 #' Very simple to use. Accepts \code{x,y} data for regression (or classification) models, and
 #' produces the basis of the central subspace, which has a lower rank to the original data matrix.
-#' The main 3 functions are: \code{psdr} for a linear PSDR, \cr
-#' \code{npsdr} is for a nonlinear PSDR \cr \code{rtpsdr} for a realtime principal least square SVM;
+#' The main 3 functions are: \code{psdr} for a linear principal machines (PM), \cr
+#' \code{npsdr} is for a nonlinear PM \cr \code{rtpsdr} is for a real-timeprincipal least square SVM;
 #'
 #' @name psvmSDR-package
 #' @docType package
-#' @author Jungmin Shin, Andreas Artemiou, Seung Jun Shin \cr Maintainer:
+#' @author Jungmin Shin, Seung Jun Shin, Andreas Artemiou \cr Maintainer:
 #' Jungmin Shin \email{jungminshin@korea.ac.kr}
 #' @references Artemiou, A. and Dong, Y. (2016)
 #' \emph{Sufficient dimension reduction via principal lq support vector machine,
@@ -43,6 +42,6 @@
 #'  Li, L. (2007)
 #' \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 #'
-#' @import graphics svmpath
+#' @import MASS graphics svmpath
 #' @aliases psvmSDR-package
 #' @srrVerbose FALSE

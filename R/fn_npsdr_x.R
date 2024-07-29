@@ -1,39 +1,29 @@
-#'Reconstruct the estimated sufficient predictors for a given \eqn{\mathbf{x}}
+#'Reconstruct the estimated sufficient predictors for a given data matrix
 #'@description
-#'Returning the estimated sufficient predictors \eqn{\hat{\phi(\mathbf{x})}} for a given \eqn{\mathbf{x}}
+#'Returning the estimated sufficient predictors \eqn{\hat{\phi}(\mathbf{x})} for a given \eqn{\mathbf{x}}
 #'@param object The object from function \code{npsdr}
 #'@param newdata new data \eqn{\mathbf{X}}
 #'@param d structural dimensionality. d=2 is default.
 #'@return the value of the estimated nonlinear mapping \eqn{\phi(\cdot)} is applied to
 #' newdata \eqn{X} with dimension d is returned.
-#' @author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+#' @author Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}
 #'@seealso \code{\link{npsdr}}
 #'@examples
 #'\donttest{
 #'set.seed(1)
-#'n <- 200;
+#'n <- 200; n.new <- 300
 #'p <- 5;
-#'H <- 20;
-#'lambda <- 0.1
-#'eps <- 1.0e-5
-#'max.iter <- 10
-#'h <- 1.0e-6; delta <- 5*1.0e-1
+#'h <- 20;
 #'x <- matrix(rnorm(n*p, 0, 2), n, p)
-#'err <- rnorm(n, 0, .2)
-#'B <- matrix(0, p, 2)
-#'B[1,1] <- 1; B[2,2] <- 1
-#'x1 <- x %*% B[,1]
-#'x2 <- x %*% B[,2]
-#'fx <-  x1/(0.5 + (x2 + 1)^2)
-#'y <- c(fx + err) # response
-#'y.binary <- sign(y)
-#'new.x <- matrix(rnorm(n*p, 0, 2), n, p)
-#'obj <- npsdr(x, y, H, h, lambda, delta, k=floor(length(y)/3), eps, max.iter, loss="svm")
-#'npsdrx(object=obj, newdata=new.x, d = 2) }
+#'y <-  x[,1]/(0.5 + (x[,2] + 1)^2) + 0.2*rnorm(n)
+#'new.x <- matrix(rnorm(n.new*p, 0, 2), n.new, p)
+#'obj_kernel <- npsdr(x, y, loss='svm', max.iter=20)
+#'npsdr_x(object=obj_kernel, newdata=new.x)
+#'}
 #'@import stats graphics svmpath
-#'@export npsdrx
+#'@export npsdr_x
 
-npsdrx <- function(object, newdata, d = 2){
+npsdr_x <- function(object, newdata, d = 2){
   obj <- object
   if (!inherits(obj, "npsdr"))
     stop("use only with \"npsdr\" objects")
@@ -54,7 +44,7 @@ npsdrx <- function(object, newdata, d = 2){
 
   n.new <- length(newdata)/p
 
-  new.x <- matrix(new.x, n.new, p)
+  new.x <- matrix(newdata, n.new, p)
   new.x <- t((t(new.x) - m)/s)
 
   Kern <- svmpath::radial.kernel(new.x, x, bw) # n * n.new

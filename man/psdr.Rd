@@ -2,148 +2,97 @@
 % Please edit documentation in R/fn_psdr.R
 \name{psdr}
 \alias{psdr}
-\title{Unified Principal sufficient dimension reduction methods}
+\title{Unified principal sufficient dimension reduction methods}
 \usage{
 psdr(
   x,
   y,
-  init = NULL,
-  H = NULL,
-  lambda = NULL,
-  delta = NULL,
-  h = 1e-05,
+  loss = "svm",
+  h = 10,
+  lambda = 1,
   eps = 1e-05,
-  max.iter = NULL,
-  loss = NULL,
-  a = NULL,
-  c = NULL,
-  stochastic = FALSE,
+  max.iter = 100,
+  eta = 0.1,
   plot = FALSE
 )
 }
 \arguments{
 \item{x}{input matrix, of dimension \code{nobs} x \code{nvars}; each row is an observation vector. Requirement: \code{nvars}>1; in other words, \code{x} should have 2 or more columns.}
 
-\item{y}{response variable, either can be continuous variable or (+1,-1) coded binary response vector}
+\item{y}{response variable, either can be continuous variable or (+1,-1) coded binary response vector.}
 
-\item{init}{initial coefficient vector of which dimension matches the \code{nvar} of \eqn{\mathbf{X}}. If it is not specified, random vector from standard normal distribution is applied by default}
+\item{loss}{pre-specified loss functions belongs to "svm", "logit","l2svm","wsvm", and etc., and user-defined loss function object also can be used formed by inside double (or single) quotation mark. Default is 'svm'.}
 
-\item{H}{the number of slices and probabilities equally spaced in \eqn{(0,1)}. default value is 10}
+\item{h}{the number of slices and probabilities equally spaced in \eqn{(0,1)}. Default value is 10.}
 
-\item{lambda}{the cost parameter for the svm loss function. The default value is 0.1}
+\item{lambda}{the cost parameter for the svm loss function. The default value is 1.}
 
-\item{delta}{learning rate for the gradient descent algorithm. The default value is 0.1}
+\item{eps}{the threshold for stopping iteration with respect to the magnitude of the change of the derivative. The default value is 1.0e-5.}
 
-\item{h}{very small interval for calculating numerical derivatives for a given arbitrary loss function. The default is 1.0e-5}
+\item{max.iter}{maximum iteration number for the optimization process. default value is 100.}
 
-\item{eps}{the threshold for stopping iteration with respect to the magnitude of the change of the derivative. The default value is 1.0e-5}
+\item{eta}{learning rate for the gradient descent algorithm. The default value is 0.1.}
 
-\item{max.iter}{maximum iteration number for the optimization process. default value is 30}
-
-\item{loss}{pre-specified loss functions are "svm", "logit","l2svm","wsvm", and etc., and user-defined loss function object also can be used formed by inside double (or single) quotation mark}
-
-\item{a}{the first hyperparameter for the LUM loss function}
-
-\item{c}{the second hyperparameter for the LUM loss function}
-
-\item{stochastic}{If \code{TRUE} then the stochastic gradient descent algorithm will be implemented to optimize the loss function. The default is FALSE}
-
-\item{plot}{If \code{TRUE} then it produces scatter plots of \eqn{Y} versus \eqn{\hat{B^{\top}}_{j}\mathbf{X}}. \eqn{j} can be specified by the user with \eqn{j=2} as a default. The default is FALSE}
+\item{plot}{If \code{TRUE} then it produces scatter plots of \eqn{Y} versus \eqn{\hat{B^{\top}}_{j}\mathbf{X}}. \eqn{j} can be specified by the user with \eqn{j=1} as a default. The default is FALSE.}
 }
 \value{
 An object with S3 class "psdr". Details are listed below.
 \item{\code{Mn}}{The estimated working matrix, which is obtained by the cumulative
-outer product of the estimated parameters over H}
-\item{\code{evalues}}{Eigenvalues of the Mn}
-\item{\code{evectors}}{Eigenvectors of the Mn, the first leading d eigenvectors consists
+outer product of the estimated parameters over the slices. It will not print out, unless it is called manually.}
+\item{\code{evalues}}{Eigenvalues of the working matrix \eqn{Mn}}
+\item{\code{evectors}}{Eigenvectors of the \eqn{Mn}, the first leading \eqn{d} eigenvectors consists
 the basis of the central subspace}
 }
 \description{
-A unified and user-friendly \proglang{R} package for applying the principal sufficient dimension reduction methods for both linear and nonlinear ,and regression and classification context.
+A unified and user-friendly \proglang{R} package for applying the principal sufficient dimension reduction methods for both linear and nonlinear, and regression and classification context.
 The package has an extendable power by varying loss functions for the SVM, even for an user-defined arbitrary function,
 unless those are convex and differentiable everywhere over the support.
-Also, it provides a realtime sufficient dimension reduction update procedure using the principal least squares SVM.
+Details on \code{loss} option
+The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method.
+It is important to remark that the convexity of the loss function is the only requirement for the unbiasedness of the PSVM,
+and this naturally leads a generalized version of PSVM, which we call the principal machine (PM).
+For example, \code{loss="lssvm"} means that the user can do SDR with least square SVM, \code{loss="asls"} is for asymmetric least square loss, and
+\code{loss="wlogit"}, which means weighted logistic loss. Entire list of loss functions is found at the \url{https://CRAN.R-project.org/package=psvmSDR}.
+Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
+Two examples of the usage of user-defined losses are presented below (\code{u} represents a margin):
 }
 \details{
-Details on \code{loss} option:
+\code{mylogit <- function(u, type="m", ...) log(1+exp(-u))},
 
-The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method. For example, \code{loss="lssvm"} means that the user can do SDR with
-least square SVM. The package provides several pre-embeded loss functions. 1. for regression problem: \code{loss="svm"} uses hinge loss, \code{loss="logit"} is for logistic loss, \code{loss="l2svm"} is the squared hinge loss,
-\code{loss="lum"} is for the large margin unified loss, \code{loss="asls"} is for asymmetric least square loss
-2. Also the corresponding weighted loss functions are included, such as, \code{loss="wsvm"} , \code{loss="wlogit"}, \code{loss="wl2svm"},
-\code{loss="wlum"} and \code{loss="wlssvm"}, which mean weighted hinge loss, weighted logistic loss, weighted squared hinge loss, weighted LUM loss and weighted least square loss, respectively.
-Entire list of loss functions is found at the \url{https://CRAN.R-project.org/package=psvmSDR}.
-Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
-Two examples of the usage of user-defined losses are presented below (\code{m} represents a margin):
+\code{myls <- function(u, type="r", ...) u^2}.
 
-\code{myLogistic <- function(m,...){rslt <- log(1+exp(-m)) return(rslt)}},
-
-\code{myLS <- function(m,...){rslt <- (1-m)^2 return(rslt)}}.
-
-Users can define their own loss function in advance, and apply those functions to \code{psdr} like \code{loss="myLogistic"}
-or \code{loss="myLS"}.
+Argument \code{u} is a function variable  (any character is possible) and \code{type} determines either margin type (\code{type="m"}) or residual type (\code{type="r"}) method. \code{type="m"} is a default.
+Any additional parameters of the loss can be specified via \code{...} argument.
 }
 \examples{
+\donttest{
 set.seed(1)
-n <- 200;
-p <- 5;
-H <- 10;
-lambda <- 0.1
-eps <- 1.0e-5
-max.iter <- 30
-init.theta <- rnorm(p,0,1)
-h <- 1.0e-5; delta <- 0.5
+n <- 200; p <- 5;
 x <- matrix(rnorm(n*p, 0, 2), n, p)
-err <- rnorm(n, 0, .2)
-B <- matrix(0, p, 2)
-B[1,1] <- 1; B[2,2] <- 1
-x1 <- x \%*\% B[,1]
-x2 <- x \%*\% B[,2]
-fx <-  x1/(0.5 + (x2 + 1)^2)
-y <- c(fx + err) # response
-my.hinge <- function(m,...){
-  rslt <- (1-m)*(as.numeric((1-m) > 0))
-  return(rslt)
-}
-obj <- psdr(x, y, init.theta, H, lambda, delta, h, eps, max.iter, loss="svm")
-psdr(x, y, init.theta, H,lambda, delta, h, eps, max.iter, loss="my.hinge")
+y <-  x[,1]/(0.5 + (x[,2] + 1)^2) + 0.2*rnorm(n)
+y.tilde <- sign(y)
+obj <- psdr(x, y)
 print(obj)
-plot(obj)
+plot(obj, d=2)
+
+obj_wsvm <- psdr(x, y.tilde, loss="wsvm")
+plot(obj_wsvm)
+
+mylogit <- function(u, type="m", ...){log(1+exp(-u))}
+obj_mylogit <- psdr(x, y, loss="mylogit")
+print(obj_mylogit)
 
 ##real data: Boston housing data
-data("BostonHousing")
-attach(BostonHousing)
-BostonHousing <- BostonHousing[BostonHousing$crim < 3.2 , -c(4,9)]
-X <- BostonHousing[,-12]
-Y <- BostonHousing[,"medv"]
-p <- ncol(X); H <- 20; lambda <- 0.1; eps <- 1.0e-5;
-max.iter <- 100; h <- 1.0e-5; delta <- 2*1.0e-1;
-set.seed(1); init.theta <- rnorm(sd=1,n=p)
-rslt <- psdr(X, Y, init.theta, H,lambda, h, delta, eps, max.iter, loss="svm")
-value.lsvm <- rslt$values
-lsvm <- round(rslt$vectors,3)
-X <- as.matrix(X)
-x.lsvm <- X \%*\% lsvm
-plot(x.lsvm[,1],Y , type = "p", xlab = expression(hat(b)[1]^T*X), ylab="medv", cex=1)
-lines(lowess( x.lsvm[,1], Y), col="red", lwd=2)
-plot(x.lsvm[,2], Y, type = "p", xlab = expression(hat(b)[2]^T*X), ylab="medv", cex=1);
-lines(lowess(x.lsvm[,2], Y), col="blue", lwd=2)
-
-##real data: Wisconsin diagnostic breast cancer data
-data(wisc)
-x.wisc <- matrix(unlist(wisc[,-c(1,2)]), ncol = 30)
-y.wisc <- 2*as.numeric(as.factor(unlist(wisc[,2]))) - 3
-init.theta <- rnorm(dim(x.wisc)[2],0,1)
-wisc.obj <- psdr(x.wisc, y.wisc, init.theta, H=20,lambda=0.1, h=1.0e-6,
-                 delta=0.5,eps=10^-4, max.iter=30, loss="wlogit")
-value.lsvm <- wisc.obj$values
-lsvm <- round(wisc.obj$vectors,3)
-x.lsvm <- x.wisc \%*\% lsvm
-par(mar=c(5,5,5,5), oma=c(1,1,1,1))
-plot(x.lsvm[,1], x.lsvm[,2], type = "n", xlab = expression(hat(b)[1]^T*X),
- ylab = expression(hat(b)[2]^T*X))
-points(x.lsvm[y.wisc == 1,1], x.lsvm[y.wisc == 1,2], col = 4, pch = "+")
-points(x.lsvm[y.wisc != 1,1], x.lsvm[y.wisc != 1,2], col = 2)
+data(Boston, package='MASS')
+attach(Boston)
+Boston <- Boston[Boston$crim < 3.2 , -c(4,9)]
+X <- as.matrix(Boston[,-12])
+Y <- Boston[,"medv"]
+p <- ncol(X);
+set.seed(1);
+rslt <- psdr(X, Y, h=20, lambda=0.1)
+plot(rslt)
+}
 }
 \references{
 Artemiou, A. and Dong, Y. (2016)
@@ -171,8 +120,8 @@ Soale, A.-N. and Dong, Y. (2022)
 \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 }
 \seealso{
-\code{\link{plot}}, \code{\link{print}}, \code{\link{crBIC}}
+\code{\link{psdr_bic}}, \code{\link{rtpsdr}}
 }
 \author{
-Jungmin Shin, \email{jungminshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}, Seung Jun Shin, \email{sjshin@korea.ac.kr}
+Jungmin Shin, \email{jungminshin@korea.ac.kr}, Seung Jun Shin, \email{sjshin@korea.ac.kr}, Andreas Artemiou \email{artemiou@uol.ac.cy}
 }
