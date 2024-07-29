@@ -1,4 +1,4 @@
-# Principal Machines for a sufficient dimension reduction
-A repository for a unified principal sufficient dimension reduction via pricipal machines.
-It includes codes for 'psdr', 'npsdr', and 'rtpsdr' and their generic methods.
+# Principal Machines for a Sufficient Dimension Reduction
+A repository for a unified principal sufficient dimension reduction via principal machines.
+It includes codes for '(Linear / Nonlinear) principal sufficient dimension reduction (psdr)' and 'realtime (psdr)' and their generic methods.
 
