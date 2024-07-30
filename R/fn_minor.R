@@ -26,8 +26,7 @@ fn_arbitrary <- function(loss){
 fn_arbitrary_loss <- function(x, y, theta, prob=0.5, lambda, loss){
   type <- formals(loss)$type
   if (is.null(type) == T){     #check lengths
-    writeLines("A type of magin should be specified. A 'm' type is applied as a default.")
-    type <- m
+    type <- "m"
   }
   if(as.character(type) == "r"){
     u <- y - x%*%theta
@@ -46,8 +45,7 @@ fn_arbitrary_loss <- function(x, y, theta, prob=0.5, lambda, loss){
 fn_arbitrary_binary_loss <- function(x, y, prob, theta, lambda, loss){
   type <- formals(loss)$type
   if (is.null(type) == T){     #check lengths
-    writeLines("A type of magin should be specified. A 'm' type is applied as a default.")
-    type <- m
+    type <- "m"
   }
   weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
   if(as.character(type)=="r"){
@@ -70,8 +68,7 @@ fn_arbitrary_nonlinear_loss <- function(x, y, theta, prob=NULL,lambda, loss){
   A <- t(x) %*% x
   type <- formals(loss)$type
   if (is.null(type) == T){     #check lengths
-    writeLines("A type of magin should be specified. A 'm' type is applied as a default.")
-    type <- m
+    type <- "m"
   }
   if(as.character(type)=="r"){
     u <- y - x%*%theta
@@ -89,20 +86,11 @@ fn_arbitrary_nonlinear_loss <- function(x, y, theta, prob=NULL,lambda, loss){
 
 
 fn_arbitrary_nonlinear_binary_loss <- function(x, y, theta, prob, lambda, loss){
-  # losses <- c()
-  # A <- t(x) %*% x
-  # weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
-  # m <- (x %*% theta)*y
-  # ft <- fn_arbitrary(loss)
-  # losses <- weight*ft(m,a,c)
-  # loss.output <- lambda*(sum(losses)/nrow(x)) + (t(theta) %*% A %*% theta)/nrow(x)
-  # return(loss.output)
   losses <- c()
   A <- t(x) %*% x
   type <- formals(loss)$type
-  if (is.null(type) == T){     #check lengths
-    writeLines("A type of magin should be specified. A 'm' type is applied as a default.")
-    type <- m
+  if (is.null(type) == T){
+    type <- "m"
   }
   weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
   if(as.character(type)=="r"){

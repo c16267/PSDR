@@ -42,6 +42,6 @@
 #'  Li, L. (2007)
 #' \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 #'
-#' @import MASS graphics svmpath
+#' @import graphics svmpath
 #' @aliases psvmSDR-package
 #' @srrVerbose FALSE

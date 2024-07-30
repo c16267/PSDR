@@ -57,11 +57,12 @@ Not only function \code{psdr} includes popular loss functions, but also, it is d
 Two examples of the usage of user-defined losses are presented below (\code{u} represents a margin):
 }
 \details{
-\code{mylogit <- function(u, type="m", ...) log(1+exp(-u))},
+\code{mylogit <- function(u, ...) log(1+exp(-u))},
 
 \code{myls <- function(u, type="r", ...) u^2}.
 
 Argument \code{u} is a function variable  (any character is possible) and \code{type} determines either margin type (\code{type="m"}) or residual type (\code{type="r"}) method. \code{type="m"} is a default.
+Users have to change \code{type="r"}, when applying residual type loss.
 Any additional parameters of the loss can be specified via \code{...} argument.
 }
 \examples{

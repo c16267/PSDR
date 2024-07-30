@@ -12,11 +12,12 @@
 #' Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
 #' Two examples of the usage of user-defined losses are presented below (\code{u} represents a margin):
 #'
-#' \code{mylogit <- function(u, type="m", ...) log(1+exp(-u))},
+#' \code{mylogit <- function(u, ...) log(1+exp(-u))},
 #'
 #' \code{myls <- function(u, type="r", ...) u^2}.
 #'
 #' Argument \code{u} is a function variable  (any character is possible) and \code{type} determines either margin type (\code{type="m"}) or residual type (\code{type="r"}) method. \code{type="m"} is a default.
+#' Users have to change \code{type="r"}, when applying residual type loss.
 #' Any additional parameters of the loss can be specified via \code{...} argument.
 #'
 #' @param x input matrix, of dimension \code{nobs} x \code{nvars}; each row is an observation vector. Requirement: \code{nvars}>1; in other words, \code{x} should have 2 or more columns.
@@ -107,7 +108,6 @@ psdr <- function(x, y, loss="svm", h=10, lambda=1, eps=1.0e-5, max.iter=100, eta
       writeLines("Loss function should be specified, hinge loss was applied.")
       loss <- 'svm'
     }
-
 
     if(is.null(max.iter) == T){
       writeLines("max.iter is set to 30 as a default.")
