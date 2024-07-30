@@ -472,10 +472,6 @@ psdr <- function(x, y, loss="svm", h=10, lambda=1, eps=1.0e-5, max.iter=100, eta
   else if(sum(as.character(loss) == type.list) == 0 & sum(as.character(loss)==type.list2)==0){
     ft <- E(loss)
     grid.m <- seq(-2,2,length=100)
-    # if(plot == TRUE){
-    #   plot(grid.m, ft(grid.m,prob=0.5), type="l", xlab="margin", ylab="loss")
-    # }
-    # writeLines("loss function must be a convex function")
     w.init <- matrix(init, nrow=p, ncol=length(qprob))
     w.final <- matrix(0, nrow=p, ncol=length(qprob))
 

@@ -25,6 +25,10 @@ fn_arbitrary <- function(loss){
 
 fn_arbitrary_loss <- function(x, y, theta, prob=0.5, lambda, loss){
   type <- formals(loss)$type
+  if (is.null(type) == T){     #check lengths
+    writeLines("A type of magin should be specified. A 'm' type is applied as a default.")
+    type <- m
+  }
   if(as.character(type) == "r"){
     u <- y - x%*%theta
     ft <- fn_arbitrary(loss)
@@ -41,6 +45,10 @@ fn_arbitrary_loss <- function(x, y, theta, prob=0.5, lambda, loss){
 
 fn_arbitrary_binary_loss <- function(x, y, prob, theta, lambda, loss){
   type <- formals(loss)$type
+  if (is.null(type) == T){     #check lengths
+    writeLines("A type of magin should be specified. A 'm' type is applied as a default.")
+    type <- m
+  }
   weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
   if(as.character(type)=="r"){
     u <- y - x%*%theta
@@ -61,6 +69,10 @@ fn_arbitrary_nonlinear_loss <- function(x, y, theta, prob=NULL,lambda, loss){
   losses <- c()
   A <- t(x) %*% x
   type <- formals(loss)$type
+  if (is.null(type) == T){     #check lengths
+    writeLines("A type of magin should be specified. A 'm' type is applied as a default.")
+    type <- m
+  }
   if(as.character(type)=="r"){
     u <- y - x%*%theta
     ft <- fn_arbitrary(loss)
@@ -88,6 +100,10 @@ fn_arbitrary_nonlinear_binary_loss <- function(x, y, theta, prob, lambda, loss){
   losses <- c()
   A <- t(x) %*% x
   type <- formals(loss)$type
+  if (is.null(type) == T){     #check lengths
+    writeLines("A type of magin should be specified. A 'm' type is applied as a default.")
+    type <- m
+  }
   weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
   if(as.character(type)=="r"){
     u <- y - x%*%theta
@@ -102,70 +118,6 @@ fn_arbitrary_nonlinear_binary_loss <- function(x, y, theta, prob, lambda, loss){
   }
   return(loss.output)
 }
-
-
-
-# fn_arbitrary_loss <- function(x, y, theta, prob=0.5, lambda, loss,a=NULL,c=NULL){
-#   if(as.character(loss) == "my.quantile"){
-#     u <- y - x%*%theta
-#     ft <- fn_arbitrary(loss)
-#     losses <- ft(u,prob)
-#     loss.output <- lambda*mean(losses) + t(theta)%*%theta
-#   }else{
-#     m <- (x %*% theta)*y
-#     ft <- fn_arbitrary(loss)
-#     losses <- ft(m,a,c)
-#     loss.output <- lambda*mean(losses) + t(theta)%*%theta
-#   }
-#   return(loss.output)
-# }
-#
-# fn_arbitrary_binary_loss <- function(x, y, prob=0.5, theta, lambda, loss,a=NULL,c=NULL){
-#   weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
-#   if(as.character(loss)=="my.quantile"){
-#     u <- y - x%*%theta
-#     ft <- fn_arbitrary(loss)
-#     losses <- weight*ft(u,prob)
-#     loss.output <- lambda*mean(losses) + t(theta)%*%theta
-#   }else{
-#     m <- (x %*% theta)*y
-#     ft <- fn_arbitrary(loss)
-#     losses <- weight*ft(m,a,c)
-#     loss.output <- lambda*mean(losses) + t(theta)%*%theta
-#   }
-#   return(loss.output)
-# }
-#
-# ##nonlinear##
-# fn_arbitrary_nonlinear_loss <- function(x, y, theta, prob=NULL,lambda, loss,a=NULL,c=NULL){
-#   losses <- c()
-#   A <- t(x) %*% x
-#   if(as.character(loss)=="my.quantile"){
-#     u <- y - x%*%theta
-#     ft <- fn_arbitrary(loss)
-#     losses <- ft(u,prob)
-#     loss.output <- lambda*(sum(losses)/nrow(x)) + (t(theta) %*% A %*% theta)/nrow(x)
-#   }else{
-#     m <- (x %*% theta)*y
-#     ft <- fn_arbitrary(loss)
-#     losses <- ft(m,a,c)
-#     loss.output <- lambda*(sum(losses)/nrow(x)) + (t(theta) %*% A %*% theta)/nrow(x)
-#   }
-#   return(loss.output)
-# }
-#
-#
-# fn_arbitrary_nonlinear_binary_loss <- function(x, y, theta, prob,lambda, loss,a=NULL,c=NULL){
-#   losses <- c()
-#   A <- t(x) %*% x
-#   weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
-#   m <- (x %*% theta)*y
-#   ft <- fn_arbitrary(loss)
-#   losses <- weight*ft(m,a,c)
-#   loss.output <- lambda*(sum(losses)/nrow(x)) + (t(theta) %*% A %*% theta)/nrow(x)
-#   return(loss.output)
-# }
-
 
 
 wvec <- function(x, y = y) {
