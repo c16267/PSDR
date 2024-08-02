@@ -74,7 +74,7 @@
 #' obj_wsvm <- psdr(x, y.tilde, loss="wsvm")
 #' plot(obj_wsvm)
 #'
-#' mylogit <- function(u, type="m", ...){log(1+exp(-u))}
+#' mylogit <- function(u){log(1+exp(-u))}
 #' obj_mylogit <- psdr(x, y, loss="mylogit")
 #' print(obj_mylogit)
 #'
@@ -89,8 +89,7 @@
 #' rslt <- psdr(X, Y, h=20, lambda=0.1)
 #' plot(rslt)
 #' }
-#'@import stats
-#'@importFrom graphics lines plot
+#'@import stats graphics
 #'@export psdr
 
 

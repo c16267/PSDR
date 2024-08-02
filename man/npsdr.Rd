@@ -43,7 +43,6 @@ An object with S3 class "npsdr". Details are listed below.
 \item{\code{evalues}}{Eigenvalues of the estimated working matrix M.}
 \item{\code{evectors}}{Eigenvectors of the estimated working matrix M, the first d leading eigenvectors consists
 the basis of the central subspace.}
-\item{\code{obj.psi}}{result of function \code{get.psi} is returned. It will not be printed out, unless called manually.}
 }
 \description{
 Principal Sufficient Dimension Reduction method
@@ -54,7 +53,7 @@ set.seed(1)
 n <- 200;
 p <- 5;
 x <- matrix(rnorm(n*p, 0, 2), n, p)
-y <-  x[,1]/(0.5 + (x[,2] + 1)^2) + 0.2*rnorm(n)
+y <- 0.5*sqrt((x[,1]^2+x[,2]^2))*(log(x[,1]^2+x[,2]^2))+ 0.2*rnorm(n)
 obj_kernel <- npsdr(x, y, plot=FALSE)
 print(obj_kernel)
 plot(obj_kernel)

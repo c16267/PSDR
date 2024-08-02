@@ -27,9 +27,9 @@ n <- 200; n.new <- 300
 p <- 5;
 h <- 20;
 x <- matrix(rnorm(n*p, 0, 2), n, p)
-y <-  x[,1]/(0.5 + (x[,2] + 1)^2) + 0.2*rnorm(n)
+y <- 0.5*sqrt((x[,1]^2+x[,2]^2))*(log(x[,1]^2+x[,2]^2))+ 0.2*rnorm(n)
 new.x <- matrix(rnorm(n.new*p, 0, 2), n.new, p)
-obj_kernel <- npsdr(x, y, loss='svm', max.iter=20)
+obj_kernel <- npsdr(x, y)
 npsdr_x(object=obj_kernel, newdata=new.x)
 }
 }

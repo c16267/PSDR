@@ -41,7 +41,6 @@
 #'  binary classification, Biometrika 104(1): 67–81}. \cr
 #'  Li, L. (2007)
 #' \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
-#'
-#' @import graphics svmpath
+#' @import MASS graphics svmpath
 #' @aliases psvmSDR-package
 #' @srrVerbose FALSE
