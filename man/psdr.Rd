@@ -83,7 +83,7 @@ obj_wsvm <- psdr(x, y.tilde, loss="wsvm")
 plot(obj_wsvm)
 
 mylogit <- function(u){log(1+exp(-u))}
-obj_mylogit <- psdr(x, y, loss="mylogit", mtype="m")
+obj_mylogit <- psdr(x, y, loss="mylogit")
 print(obj_mylogit)
 
 ##real data: Boston housing data
