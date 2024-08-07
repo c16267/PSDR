@@ -14,6 +14,7 @@ npsdr(
   eps = 1e-05,
   max.iter = 100,
   eta = 0.1,
+  mtype,
   plot = TRUE
 )
 }
@@ -35,6 +36,8 @@ npsdr(
 \item{max.iter}{maximum iteration number for the optimization process. default value is 30}
 
 \item{eta}{learning rate for gradient descent method. default value is 0.1}
+
+\item{mtype}{type of margin, either "m" or "r" refer margin and residual, respectively (See, Table 1 in the pacakge manuscript). When one use user-defined loss function this argument should be specified. Default is "m".}
 
 \item{plot}{If \code{TRUE} then it produces scatter plots of \eqn{Y} versus the first sufficient predictor. The default is FALSE.}
 }

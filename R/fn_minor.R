@@ -23,12 +23,12 @@ fn_arbitrary <- function(loss){
 ############################
 ##linear##
 
-fn_arbitrary_loss <- function(x, y, theta, prob=0.5, lambda, loss){
-  type <- formals(loss)$type
-  if (is.null(type) == T){     #check lengths
-    type <- "m"
+fn_arbitrary_loss <- function(x, y, theta, prob=0.5, lambda, loss, mtype){
+  #type <- formals(loss)$type
+  if (is.null(mtype) == T){     #check lengths
+    mtype <- "m"
   }
-  if(as.character(type) == "r"){
+  if(as.character(mtype) == "r"){
     u <- y - x%*%theta
     ft <- fn_arbitrary(loss)
     losses <- ft(u,prob)
@@ -42,13 +42,13 @@ fn_arbitrary_loss <- function(x, y, theta, prob=0.5, lambda, loss){
   return(loss.output)
 }
 
-fn_arbitrary_binary_loss <- function(x, y, prob, theta, lambda, loss){
-  type <- formals(loss)$type
-  if (is.null(type) == T){     #check lengths
-    type <- "m"
+fn_arbitrary_binary_loss <- function(x, y, prob, theta, lambda, loss, mtype){
+  #type <- formals(loss)$type
+  if (is.null(mtype) == T){     #check lengths
+    mtype <- "m"
   }
   weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
-  if(as.character(type)=="r"){
+  if(as.character(mtype)=="r"){
     u <- y - x%*%theta
     ft <- fn_arbitrary(loss)
     losses <- weight*ft(u,prob)
@@ -63,14 +63,14 @@ fn_arbitrary_binary_loss <- function(x, y, prob, theta, lambda, loss){
 }
 
 ##nonlinear##
-fn_arbitrary_nonlinear_loss <- function(x, y, theta, prob=NULL,lambda, loss){
+fn_arbitrary_nonlinear_loss <- function(x, y, theta, prob=NULL,lambda, loss, mtype){
   losses <- c()
   A <- t(x) %*% x
-  type <- formals(loss)$type
-  if (is.null(type) == T){     #check lengths
-    type <- "m"
+  #type <- formals(loss)$type
+  if (is.null(mtype) == T){     #check lengths
+    mtype <- "m"
   }
-  if(as.character(type)=="r"){
+  if(as.character(mtype)=="r"){
     u <- y - x%*%theta
     ft <- fn_arbitrary(loss)
     losses <- ft(u,prob)
@@ -85,15 +85,15 @@ fn_arbitrary_nonlinear_loss <- function(x, y, theta, prob=NULL,lambda, loss){
 }
 
 
-fn_arbitrary_nonlinear_binary_loss <- function(x, y, theta, prob, lambda, loss){
+fn_arbitrary_nonlinear_binary_loss <- function(x, y, theta, prob, lambda, loss, mtype){
   losses <- c()
   A <- t(x) %*% x
-  type <- formals(loss)$type
-  if (is.null(type) == T){
-    type <- "m"
+  #type <- formals(loss)$type
+  if (is.null(mtype) == T){
+    mtype <- "m"
   }
   weight <- (1-prob)*(as.numeric(y==1)) + (prob)*(as.numeric(y==-1))
-  if(as.character(type)=="r"){
+  if(as.character(mtype)=="r"){
     u <- y - x%*%theta
     ft <- fn_arbitrary(loss)
     losses <- weight*ft(u,prob)

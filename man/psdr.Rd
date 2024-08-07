@@ -13,6 +13,7 @@ psdr(
   eps = 1e-05,
   max.iter = 100,
   eta = 0.1,
+  mtype = "m",
   plot = FALSE
 )
 }
@@ -32,6 +33,8 @@ psdr(
 \item{max.iter}{maximum iteration number for the optimization process. default value is 100.}
 
 \item{eta}{learning rate for the gradient descent algorithm. The default value is 0.1.}
+
+\item{mtype}{type of margin, either "m" or "r" refer margin and residual, respectively (See, Table 1 in the pacakge manuscript). When one use user-defined loss function this argument should be specified. Default is "m".}
 
 \item{plot}{If \code{TRUE} then it produces scatter plots of \eqn{Y} versus \eqn{\hat{B^{\top}}_{j}\mathbf{X}}. \eqn{j} can be specified by the user with \eqn{j=1} as a default. The default is FALSE.}
 }
@@ -59,7 +62,7 @@ Two examples of the usage of user-defined losses are presented below (\code{u} r
 \details{
 \code{mylogit <- function(u, ...) log(1+exp(-u))},
 
-\code{myls <- function(u, type="r", ...) u^2}.
+\code{myls <- function(u ...) u^2}.
 
 Argument \code{u} is a function variable  (any character is possible) and \code{type} determines either margin type (\code{type="m"}) or residual type (\code{type="r"}) method. \code{type="m"} is a default.
 Users have to change \code{type="r"}, when applying residual type loss.
@@ -80,7 +83,7 @@ obj_wsvm <- psdr(x, y.tilde, loss="wsvm")
 plot(obj_wsvm)
 
 mylogit <- function(u){log(1+exp(-u))}
-obj_mylogit <- psdr(x, y, loss="mylogit")
+obj_mylogit <- psdr(x, y, loss="mylogit", mtype="m")
 print(obj_mylogit)
 
 ##real data: Boston housing data

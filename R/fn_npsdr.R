@@ -10,6 +10,7 @@
 #'@param eps threshold for stopping iteration with respect to the magnitude of derivative, default value is 1.0e-4
 #'@param max.iter maximum iteration number for the optimization process. default value is 30
 #'@param eta learning rate for gradient descent method. default value is 0.1
+#' @param mtype type of margin, either "m" or "r" refer margin and residual, respectively (See, Table 1 in the pacakge manuscript). When one use user-defined loss function this argument should be specified. Default is "m".
 #' @param plot If \code{TRUE} then it produces scatter plots of \eqn{Y} versus the first sufficient predictor. The default is FALSE.
 #' @return An object with S3 class "npsdr". Details are listed below.
 #' \item{\code{evalues}}{Eigenvalues of the estimated working matrix M.}
@@ -57,7 +58,7 @@
 
 
 npsdr <- function(x, y, loss="svm", h=10, lambda=1, b=floor(length(y)/3),
-                  eps=1.0e-5, max.iter=100, eta=0.1, plot=TRUE)
+                  eps=1.0e-5, max.iter=100, eta=0.1, mtype, plot=TRUE)
 {
   if(sum(as.character(loss) == c("lssvm", "wlssvm")) == 0){
     if(!is.matrix(x) & !is.data.frame(x))
@@ -422,8 +423,8 @@ npsdr <- function(x, y, loss="svm", h=10, lambda=1, b=floor(length(y)/3),
           n <- nrow(Psi)
           derivative.vec <- rep(0,p)
           for (k in 1:p){
-            star <- (fn_arbitrary_nonlinear_loss(Psi, y.tilde,theta=w[,s]+interval*eigen.mat[,k],lambda,loss,prob=pi.grid[s])-
-                       fn_arbitrary_nonlinear_loss(Psi, y.tilde,theta=w[,s]-interval*eigen.mat[,k],lambda,loss,prob=pi.grid[s]))
+            star <- (fn_arbitrary_nonlinear_loss(Psi, y.tilde,theta=w[,s]+interval*eigen.mat[,k],lambda,loss,prob=pi.grid[s], mtype="m")-
+                       fn_arbitrary_nonlinear_loss(Psi, y.tilde,theta=w[,s]-interval*eigen.mat[,k],lambda,loss,prob=pi.grid[s], mtype="m"))
             derivative.vec[k] <- sign(star)*exp( log(abs(star))-log(2*interval))
             theta.new[k] <- w[k,s] - eta * derivative.vec[k] ###k,k,s,k
           }
@@ -447,8 +448,8 @@ npsdr <- function(x, y, loss="svm", h=10, lambda=1, b=floor(length(y)/3),
           n <- nrow(Psi)
           derivative.vec <- rep(0,p)
           for (k in 1:p){
-            derivative.vec[k] <- (fn_arbitrary_nonlinear_binary_loss(Psi, y.bi, prob=pi.grid[s],theta=w[,s]+interval*eigen.mat[,k],lambda,loss)-
-                                    fn_arbitrary_nonlinear_binary_loss(Psi, y.bi ,prob=pi.grid[s],theta=w[,s]-interval*eigen.mat[,k],lambda,loss)) / (2*interval)
+            derivative.vec[k] <- (fn_arbitrary_nonlinear_binary_loss(Psi, y.bi, prob=pi.grid[s],theta=w[,s]+interval*eigen.mat[,k],lambda,loss, mtype="m")-
+                                    fn_arbitrary_nonlinear_binary_loss(Psi, y.bi ,prob=pi.grid[s],theta=w[,s]-interval*eigen.mat[,k],lambda,loss, mtype="m")) / (2*interval)
             theta.new[k] <- w[k,s] - eta * derivative.vec[k]
           }
           w[,s] <- theta.new

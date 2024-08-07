@@ -14,7 +14,7 @@
 #'
 #' \code{mylogit <- function(u, ...) log(1+exp(-u))},
 #'
-#' \code{myls <- function(u, type="r", ...) u^2}.
+#' \code{myls <- function(u ...) u^2}.
 #'
 #' Argument \code{u} is a function variable  (any character is possible) and \code{type} determines either margin type (\code{type="m"}) or residual type (\code{type="r"}) method. \code{type="m"} is a default.
 #' Users have to change \code{type="r"}, when applying residual type loss.
@@ -28,6 +28,7 @@
 #' @param eps the threshold for stopping iteration with respect to the magnitude of the change of the derivative. The default value is 1.0e-5.
 #' @param max.iter maximum iteration number for the optimization process. default value is 100.
 #' @param eta learning rate for the gradient descent algorithm. The default value is 0.1.
+#' @param mtype type of margin, either "m" or "r" refer margin and residual, respectively (See, Table 1 in the pacakge manuscript). When one use user-defined loss function this argument should be specified. Default is "m".
 #' @param plot If \code{TRUE} then it produces scatter plots of \eqn{Y} versus \eqn{\hat{B^{\top}}_{j}\mathbf{X}}. \eqn{j} can be specified by the user with \eqn{j=1} as a default. The default is FALSE.
 #' @return An object with S3 class "psdr". Details are listed below.
 #' \item{\code{Mn}}{The estimated working matrix, which is obtained by the cumulative
@@ -60,7 +61,7 @@
 #'  Li, L. (2007)
 #' \emph{Sparse sufficient dimension reduction, Biometrika 94(3): 603–613}.
 #' @seealso \code{\link{psdr_bic}}, \code{\link{rtpsdr}}
-#' @examples
+#'@examples
 #'\donttest{
 #' set.seed(1)
 #' n <- 200; p <- 5;
@@ -75,7 +76,7 @@
 #' plot(obj_wsvm)
 #'
 #' mylogit <- function(u){log(1+exp(-u))}
-#' obj_mylogit <- psdr(x, y, loss="mylogit")
+#' obj_mylogit <- psdr(x, y, loss="mylogit", mtype="m")
 #' print(obj_mylogit)
 #'
 #' ##real data: Boston housing data
@@ -93,7 +94,7 @@
 #'@export psdr
 
 
-psdr <- function(x, y, loss="svm", h=10, lambda=1, eps=1.0e-5, max.iter=100, eta=0.1, plot=FALSE){
+psdr <- function(x, y, loss="svm", h=10, lambda=1, eps=1.0e-5, max.iter=100, eta=0.1, mtype="m", plot=FALSE){
   if(sum(as.character(loss) == c("lssvm", "wlssvm")) == 0){
     if(!is.matrix(x) & !is.data.frame(x))
       stop("x must be a matrix or dataframe.")
@@ -489,8 +490,8 @@ psdr <- function(x, y, loss="svm", h=10, lambda=1, eps=1.0e-5, max.iter=100, eta
           n <- nrow(z)
           derivative.vec <- rep(0,p)
           for (k in 1:p){
-            star <- (fn_arbitrary_loss(z, y.tilde,theta=w[,s]+interval*eigen.mat[,k],lambda,loss,prob=pi.grid[s])-
-                       fn_arbitrary_loss(z, y.tilde,theta=w[,s]-interval*eigen.mat[,k],lambda,loss,prob=pi.grid[s]))
+            star <- (fn_arbitrary_loss(z, y.tilde,theta=w[,s]+interval*eigen.mat[,k],lambda,loss,prob=pi.grid[s], mtype="m")-
+                       fn_arbitrary_loss(z, y.tilde,theta=w[,s]-interval*eigen.mat[,k],lambda,loss,prob=pi.grid[s], mtype="m"))
             derivative.vec[k] <- sign(star)*exp( log(abs(star))-log(2*interval))
             theta.new[k] <- w[k,s] - eta * derivative.vec[k] ###k,k,s,k
           }
@@ -518,8 +519,8 @@ psdr <- function(x, y, loss="svm", h=10, lambda=1, eps=1.0e-5, max.iter=100, eta
           y.bi <- y.new
           derivative.vec <- rep(0,p)
           for (k in 1:p){
-            star <- (fn_arbitrary_binary_loss(z, y.bi, prob=pi.grid[s],theta=w[,s]+interval*eigen.mat[,k],lambda,loss)-
-                       fn_arbitrary_binary_loss(z, y.bi,prob=pi.grid[s],theta=w[,s]-interval*eigen.mat[,k],lambda,loss))
+            star <- (fn_arbitrary_binary_loss(z, y.bi, prob=pi.grid[s],theta=w[,s]+interval*eigen.mat[,k],lambda,loss, mtype="m")-
+                       fn_arbitrary_binary_loss(z, y.bi,prob=pi.grid[s],theta=w[,s]-interval*eigen.mat[,k],lambda,loss, mtype="m"))
             derivative.vec[k] <- sign(star)*exp( log(abs(star))-log(2*interval))
             theta.new[k] <- w[k,s] - eta * derivative.vec[k]
           }
