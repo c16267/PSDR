@@ -16,7 +16,7 @@
 #'
 #' \code{myls <- function(u ...) u^2}.
 #'
-#' Argument \code{u} is a function variable  (any character is possible) and \code{type} determines either margin type (\code{type="m"}) or residual type (\code{type="r"}) method. \code{type="m"} is a default.
+#' Argument \code{u} is a function variable  (any character is possible) and the argument \code{mtype} for \code{psdr()} determines a type of a margin, either (\code{type="m"}) or (\code{type="r"}) method. \code{type="m"} is a default.
 #' Users have to change \code{type="r"}, when applying residual type loss.
 #' Any additional parameters of the loss can be specified via \code{...} argument.
 #'
@@ -28,7 +28,7 @@
 #' @param eps the threshold for stopping iteration with respect to the magnitude of the change of the derivative. The default value is 1.0e-5.
 #' @param max.iter maximum iteration number for the optimization process. default value is 100.
 #' @param eta learning rate for the gradient descent algorithm. The default value is 0.1.
-#' @param mtype type of margin, either "m" or "r" refer margin and residual, respectively (See, Table 1 in the pacakge manuscript). When one use user-defined loss function this argument should be specified. Default is "m".
+#' @param mtype a margin type, which is either margin ("m") or residual ("r") (See, Table 1 in manuscript). Only need when user-defined loss is used. Default is "m".
 #' @param plot If \code{TRUE} then it produces scatter plots of \eqn{Y} versus \eqn{\hat{B^{\top}}_{j}\mathbf{X}}. \eqn{j} can be specified by the user with \eqn{j=1} as a default. The default is FALSE.
 #' @return An object with S3 class "psdr". Details are listed below.
 #' \item{\code{Mn}}{The estimated working matrix, which is obtained by the cumulative

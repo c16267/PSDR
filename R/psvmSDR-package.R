@@ -2,10 +2,12 @@
 #'
 #' Principal Sufficient Dimension Reduction methods
 #'
-#' This package estimates the basis of the central subspace for both regression and classification problems
-#' with underlying assumption of linear or nonlinear relationship between predictors and response variable.
-#' This package implements a various principal sufficient dimension reduction methods (often called 'Principal Machines (PM)') in a unified fashion.
-#' It ranges from linear, nonlinear dimension reduction to real-time cases where the data is collected sequentially.
+#'
+#' Sufficient dimension reduction (SDR), which seeks a lower-dimensional subspace of the predictors containing regression or classification
+#' information has been popular in machine learning community. In this work, we present a new package \pkg{psvmSDR} that implements several recently proposed SDR estimators,
+#' which we call the principal machine (PM) derived from the principal support vector machine (PSVM).
+#' The package covers both linear and nonlinear SDR and provides a function applicable to a realtime update scenarios.
+#' The package implements the well-known gradient descent algorithm for the PMs to efficiently compute the SDR estimators in various situations.
 #'
 #' \tabular{ll}{ Package: \tab psvmSDR\cr Type: \tab Package\cr Version: \tab
 #' 1.0.0\cr Date: \tab 2024-05-01\cr License: \tab GPL-2 \cr }
