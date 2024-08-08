@@ -2,7 +2,7 @@
 % Please edit documentation in R/fn_rtpsdr.R
 \name{rtpsdr}
 \alias{rtpsdr}
-\title{Real time sufficient dimension reduction through principal least squares regression}
+\title{Real time sufficient dimension reduction through principal least squares SVM}
 \usage{
 rtpsdr(x, y, obj = NULL, h = 10, lambda = 1)
 }

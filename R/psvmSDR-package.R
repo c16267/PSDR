@@ -2,7 +2,6 @@
 #'
 #' Principal Sufficient Dimension Reduction methods
 #'
-#'
 #' Sufficient dimension reduction (SDR), which seeks a lower-dimensional subspace of the predictors containing regression or classification
 #' information has been popular in machine learning community. In this work, we present a new package \pkg{psvmSDR} that implements several recently proposed SDR estimators,
 #' which we call the principal machine (PM) derived from the principal support vector machine (PSVM).
@@ -14,7 +13,7 @@
 #' Very simple to use. Accepts \code{x,y} data for regression (or classification) models, and
 #' produces the basis of the central subspace, which has a lower rank to the original data matrix.
 #' The main 3 functions are: \code{psdr} for a linear principal machines (PM), \cr
-#' \code{npsdr} is for a nonlinear PM \cr \code{rtpsdr} is for a real-timeprincipal least square SVM;
+#' \code{npsdr} is for a nonlinear PM \cr \code{rtpsdr} is for a real-time principal least square SVM;
 #'
 #' @name psvmSDR-package
 #' @docType package

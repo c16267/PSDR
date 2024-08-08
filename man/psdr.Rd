@@ -2,7 +2,7 @@
 % Please edit documentation in R/fn_psdr.R
 \name{psdr}
 \alias{psdr}
-\title{Unified principal sufficient dimension reduction methods}
+\title{Unified linear principal sufficient dimension reduction methods}
 \usage{
 psdr(
   x,
@@ -47,19 +47,11 @@ outer product of the estimated parameters over the slices. It will not print out
 the basis of the central subspace}
 }
 \description{
-A unified and user-friendly \proglang{R} package for applying the principal sufficient dimension reduction methods for both linear and nonlinear, and regression and classification context.
-The package has an extendable power by varying loss functions for the SVM, even for an user-defined arbitrary function,
-unless those are convex and differentiable everywhere over the support.
-Details on \code{loss} option
-The argument \code{loss} determines a specific loss function for SVM and the corresponding SDR method.
-It is important to remark that the convexity of the loss function is the only requirement for the unbiasedness of the PSVM,
-and this naturally leads a generalized version of PSVM, which we call the principal machine (PM).
-For example, \code{loss="lssvm"} means that the user can do SDR with least square SVM, \code{loss="asls"} is for asymmetric least square loss, and
-\code{loss="wlogit"}, which means weighted logistic loss. Entire list of loss functions is found at the \url{https://CRAN.R-project.org/package=psvmSDR}.
-Not only function \code{psdr} includes popular loss functions, but also, it is designed for working with user defined arbitrary convex loss function that is claimed through the argument \code{loss}.
-Two examples of the usage of user-defined losses are presented below (\code{u} represents a margin):
+A function for a linear principal sufficient dimension reduction.
 }
 \details{
+Two examples of the usage of user-defined losses are presented below (\code{u} represents a margin):
+
 \code{mylogit <- function(u, ...) log(1+exp(-u))},
 
 \code{myls <- function(u ...) u^2}.

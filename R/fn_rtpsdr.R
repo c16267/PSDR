@@ -1,4 +1,4 @@
-#'Real time sufficient dimension reduction through principal least squares regression
+#'Real time sufficient dimension reduction through principal least squares SVM
 #'@description
 #'In stream data, where we need to constantly update the estimation as new data are collected,
 #'the use of all available data can create computational challenges even for computationally efficient algorithms.
