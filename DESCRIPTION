@@ -1,7 +1,7 @@
 Type: Package
 Package: psvmSDR
 Title: Unified Principal Sufficient Dimension Reduction Package
-Version: 1.0.0
+Version: 1.0.2
 Authors@R: c(person(given = "Jungmin",
                     family = "Shin",
                     role = c("aut", "cre"),
@@ -13,7 +13,7 @@ Authors@R: c(person(given = "Jungmin",
                     family = "Artemiou",
                     role = "aut"))
 Maintainer: Jungmin Shin <jungminshin@korea.ac.kr>
-Description: A unified and user-friendly framework for applying the principal sufficient dimension reduction methods for both linear and nonlinear cases. The package has an extendable power by varying loss functions for the support vector machine (SVM), even for an user-defined arbitrary function, unless those are convex and differentiable everywhere over the support. Also, it provides a real-time sufficient dimension reduction update procedure using the principal least squares support vector machine.
+Description: A unified and user-friendly framework for applying the principal sufficient dimension reduction methods for both linear and nonlinear cases. The package has an extendable power by varying loss functions for the support vector machine, even for an user-defined arbitrary function, unless those are convex and differentiable everywhere over the support (Li et al. (2011) <doi:10.1214/11-AOS932>). Also, it provides a real-time sufficient dimension reduction update procedure using the principal least squares support vector machine (Artemiou et al. (2021) <doi:10.1016/j.patcog.2020.107768>).
 License: GPL-2
 Encoding: UTF-8
 Imports:
